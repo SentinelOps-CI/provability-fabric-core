@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.action.v1",
+  "title": "PF-Core Action (v1)",
+  "description": "Multi-effect action with read/write resource lists.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "principal",
+    "capability",
+    "effects",
+    "reads",
+    "writes"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.action.v1" },
+    "id": { "type": "string" },
+    "principal": { "$ref": "pf-core.principal.v1" },
+    "capability": { "$ref": "pf-core.capability.v0" },
+    "effects": {
+      "type": "array",
+      "items": { "$ref": "pf-core.effect.v0" },
+      "minItems": 1
+    },
+    "reads": {
+      "type": "array",
+      "items": { "$ref": "pf-core.resource.v0" }
+    },
+    "writes": {
+      "type": "array",
+      "items": { "$ref": "pf-core.resource.v0" }
+    }
+  }
+}
