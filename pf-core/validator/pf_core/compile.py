@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any, Dict, Mapping, Optional
 
 from pf_core.deciders import action_allowed
@@ -14,7 +16,7 @@ from pf_core.errors import (
     UnsupportedCapability,
     UnsupportedEffect,
 )
-from pf_core.hash_chain import compute_event_hash
+from pf_core.hash_chain import compute_event_hash, normalize_hash
 from pf_core.schemas import EFFECT_KINDS, GENESIS_HASH, SCHEMA_KINDS
 
 CAPABILITY_CATALOG: Dict[str, Dict[str, str]] = {
@@ -61,14 +63,30 @@ CAPABILITY_CATALOG: Dict[str, Dict[str, str]] = {
 }
 
 POLICY_CATALOG = {"policy/default.v0", "policy/lab-gate.v0"}
-EVIDENCE_CATALOG = {"evidence/mcp-audit.v0", "evidence/lab-signoff.v0"}
+EVIDENCE_CATALOG = {
+    "evidence/mcp-audit.v0",
+    "evidence/lab-signoff.v0",
+    "evidence/handoff.v0",
+}
 
 
-def _check_schema_version(obs: Mapping[str, Any]) -> None:
+def load_capability_catalog(root: Optional[Path] = None) -> None:
+    """Merge adapter-exported catalog when present (untrusted input)."""
+    global CAPABILITY_CATALOG
+    path = (root or Path(".")) / "adapters/provability-fabric/fixtures/capability_catalog.json"
+    if not path.exists():
+        return
+    exported = json.loads(path.read_text(encoding="utf-8"))
+    for entry in exported.get("capabilities", []):
+        CAPABILITY_CATALOG[entry["id"]] = entry
+
+
+def _check_schema_version(obs: Mapping[str, Any]) -> str:
     version = obs.get("schema_version")
+    if version in {"pf-core.runtime_observation.v0", "pf-core.runtime_observation.v1"}:
+        return str(version)
     expected = SCHEMA_KINDS["runtime_observation"]
-    if version != expected:
-        raise InvalidSchemaVersion(expected, str(version))
+    raise InvalidSchemaVersion(expected, str(version))
 
 
 def _resolve_capability(obs: Mapping[str, Any]) -> Dict[str, str]:
@@ -110,12 +128,60 @@ def _resolve_capability(obs: Mapping[str, Any]) -> Dict[str, str]:
     }
 
 
+def compile_observation_v1(obs: Mapping[str, Any]) -> Dict[str, Any]:
+    for field in (
+        "trace_id",
+        "event_id",
+        "observation_id",
+        "principal",
+        "action",
+        "decision",
+        "policy_ref",
+        "evidence_ref",
+        "runtime_ref",
+        "timestamp",
+        "previous_event_hash",
+        "hash",
+    ):
+        if field not in obs:
+            raise MissingRequiredField(field)
+
+    policy_ref = obs.get("policy_ref")
+    if policy_ref and policy_ref not in POLICY_CATALOG:
+        raise PolicyRefNotFound(str(policy_ref), "policy_ref")
+
+    evidence_ref = obs.get("evidence_ref")
+    if evidence_ref and evidence_ref not in EVIDENCE_CATALOG:
+        raise EvidenceRefNotFound(str(evidence_ref), "evidence_ref")
+
+    action = dict(obs["action"])
+    decision = obs["decision"]
+    if decision == "allowed" and not action_allowed(action):
+        decision = "denied"
+
+    prev_hash = normalize_hash(str(obs["previous_event_hash"]))
+    event: Dict[str, Any] = {
+        "schema_version": "pf-core.event.v1",
+        "event_id": obs["event_id"],
+        "event_kind": {"type": "action", "action": action},
+        "decision": decision,
+        "reason": obs.get("reason", ""),
+        "evidence_ref": obs.get("evidence_ref", ""),
+        "previous_event_hash": prev_hash,
+        "event_hash": "0" * 64,
+    }
+    event["event_hash"] = compute_event_hash(event)
+    return event
+
+
 def compile_observation(
     obs: Mapping[str, Any],
     *,
     principal_roles: Optional[list[str]] = None,
 ) -> Dict[str, Any]:
-    _check_schema_version(obs)
+    version = _check_schema_version(obs)
+    if version == "pf-core.runtime_observation.v1":
+        return compile_observation_v1(obs)
 
     for field in (
         "observation_id",
