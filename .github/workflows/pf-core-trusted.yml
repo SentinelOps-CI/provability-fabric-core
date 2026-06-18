@@ -1,0 +1,33 @@
+name: pf-core-trusted
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pf-core-trusted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+      - name: Add elan to PATH
+        run: echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install jsonschema referencing
+          pip install -e pf-core/validator
+
+      - name: Run pf-core-trusted
+        run: make pf-core-trusted
+        env:
+          PYTHONPATH: ${{ github.workspace }}/pf-core/validator
