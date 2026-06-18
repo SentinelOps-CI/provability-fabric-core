@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.capability.v0",
+  "title": "PF-Core Capability",
+  "description": "Effect kind and resource pattern binding. Version: pf-core.capability.v0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "effect_kind", "resource_pattern"],
+  "properties": {
+    "schema_version": { "const": "pf-core.capability.v0" },
+    "id": { "type": "string", "minLength": 1 },
+    "effect_kind": {
+      "type": "string",
+      "enum": [
+        "file.read",
+        "file.write",
+        "network.egress",
+        "email.send",
+        "handoff.delegate",
+        "mcp.invoke",
+        "lab.release"
+      ]
+    },
+    "resource_pattern": { "type": "string", "minLength": 1 }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.capability.v0",
+      "id": "cap:file-read",
+      "effect_kind": "file.read",
+      "resource_pattern": "/data/*"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "unsupported effect_kind",
+      "value": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:custom",
+        "effect_kind": "custom.unknown",
+        "resource_pattern": "*"
+      }
+    }
+  ]
+}
