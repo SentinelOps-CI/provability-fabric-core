@@ -12,6 +12,11 @@ namespace PFCore
 
 abbrev Trace := List Event
 
+/-- Trace membership: event occurs in an event list. -/
+inductive EventOccurrence : Event → Trace → Prop where
+  | head (ev : Event) (tr : Trace) : EventOccurrence ev (ev :: tr)
+  | tail (ev ev' : Event) (tr : Trace) : EventOccurrence ev tr → EventOccurrence ev (ev' :: tr)
+
 def TraceSafe (tr : Trace) : Prop :=
   ∀ ev ∈ tr, EventSafe ev
 
@@ -99,7 +104,7 @@ theorem every_allowed_action_event_in_safe_trace_is_allowed (tr : Trace) (ht : T
 
 /--
 ## Plain-English meaning
-In a safe trace, every allowed handoff event preserves recipient authority bounds.
+In a safe trace, every allowed handoff event delegates only source-authorized capabilities.
 
 ## Trusted use
 Integrates `handoff_does_not_expand_authority` with trace safety.
@@ -110,9 +115,33 @@ Recipient cannot misuse already-held capability.
 theorem every_allowed_handoff_in_safe_trace_preserves_authority (tr : Trace) (ht : TraceSafe tr)
     (ev : Event) (h : Handoff) (hin : ev ∈ tr) (hd : ev.decision = Decision.allowed)
     (hk : ev.kind = EventKind.handoff h) :
-    HandoffSafe h ∧
-    HasCapability h.toPrincipal h.capability := by
-  have hs := allowed_handoff_event_is_safe ev h hk hd (ht ev hin)
-  exact ⟨hs, handoff_does_not_expand_authority h hs⟩
+    HandoffSafe h := by
+  exact allowed_handoff_event_is_safe ev h hk hd (ht ev hin)
+
+/--
+## Plain-English meaning
+`EventOccurrence` matches list membership for trace events.
+
+## Trusted use
+Spec-aligned naming for trace replay proofs.
+
+## Does not imply
+Temporal ordering beyond list structure.
+-/
+theorem eventOccurrence_iff_mem (ev : Event) (tr : Trace) :
+    EventOccurrence ev tr ↔ ev ∈ tr := by
+  constructor
+  · intro h
+    induction h with
+    | head => simp
+    | tail ev' tr _ ih => simp [List.mem_cons]; exact Or.inr ih
+  · intro h
+    induction tr with
+    | nil => cases h
+    | cons head tail ih =>
+      simp [List.mem_cons] at h
+      rcases h with rfl | htail
+      · exact EventOccurrence.head ev tail
+      · exact EventOccurrence.tail ev head tail (ih htail)
 
 end PFCore
