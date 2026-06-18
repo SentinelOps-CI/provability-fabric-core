@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.event.v1",
+  "title": "PF-Core Event (v1)",
+  "description": "Trace event with discriminated action or handoff payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_kind",
+    "decision",
+    "previous_event_hash",
+    "event_hash"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.event.v1" },
+    "event_id": { "type": "string", "minLength": 1 },
+    "event_kind": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "action"],
+          "properties": {
+            "type": { "const": "action" },
+            "action": { "$ref": "pf-core.action.v0" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "handoff"],
+          "properties": {
+            "type": { "const": "handoff" },
+            "handoff": { "$ref": "pf-core.handoff.v0" }
+          }
+        }
+      ]
+    },
+    "decision": { "type": "string", "enum": ["allowed", "denied"] },
+    "previous_event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.event.v1",
+      "event_id": "ev-example",
+      "event_kind": {
+        "type": "action",
+        "action": {
+          "schema_version": "pf-core.action.v0",
+          "principal": {
+            "schema_version": "pf-core.principal.v0",
+            "id": "agent-1",
+            "tenant_id": "tenant-a",
+            "roles": ["cap:file-read"]
+          },
+          "capability": {
+            "schema_version": "pf-core.capability.v0",
+            "id": "cap:file-read",
+            "effect_kind": "file.read",
+            "resource_pattern": "/data/*"
+          },
+          "resource": {
+            "schema_version": "pf-core.resource.v0",
+            "uri": "/data/report.txt",
+            "tenant_id": "tenant-a"
+          },
+          "effect": {
+            "schema_version": "pf-core.effect.v0",
+            "kind": "file.read"
+          }
+        }
+      },
+      "decision": "allowed",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "0000000000000000000000000000000000000000000000000000000000000001"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "tampered event_hash",
+      "value": {
+        "schema_version": "pf-core.event.v1",
+        "event_id": "ev-bad",
+        "event_kind": {
+          "type": "action",
+          "action": {
+            "schema_version": "pf-core.action.v0",
+            "principal": {
+              "schema_version": "pf-core.principal.v0",
+              "id": "agent-1",
+              "tenant_id": "tenant-a",
+              "roles": ["cap:file-read"]
+            },
+            "capability": {
+              "schema_version": "pf-core.capability.v0",
+              "id": "cap:file-read",
+              "effect_kind": "file.read",
+              "resource_pattern": "/data/*"
+            },
+            "resource": {
+              "schema_version": "pf-core.resource.v0",
+              "uri": "/data/report.txt",
+              "tenant_id": "tenant-a"
+            },
+            "effect": {
+              "schema_version": "pf-core.effect.v0",
+              "kind": "file.read"
+            }
+          }
+        },
+        "decision": "allowed",
+        "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "event_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    }
+  ]
+}
