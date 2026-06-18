@@ -14,7 +14,10 @@ Checked example scenarios mirroring JSON fixtures.
 namespace PFCore.Examples
 
 def agentPrincipal : Principal :=
-  { id := "agent-1", tenantId := "tenant-a", roles := ["cap:file-read", "cap:email-send"] }
+  { id := "agent-1"
+    tenantId := "tenant-a"
+    roles := ["agent"]
+    capabilities := [] }
 
 def readerCapability : Capability :=
   { id := "cap:file-read", effectKind := "file.read", resourcePattern := "/data/*" }
@@ -25,13 +28,12 @@ def dataResource : Resource :=
 def fileReadEffect : Effect := { kind := .fileRead }
 
 def fileReadAction : Action :=
-  { principal := agentPrincipal, capability := readerCapability,
-    resource := dataResource, effect := fileReadEffect }
+  Action.ofLegacy agentPrincipal readerCapability dataResource fileReadEffect
 
-example : ActionAllowed fileReadAction := by
-  simp [ActionAllowed, fileReadAction, agentPrincipal, readerCapability,
-    dataResource, fileReadEffect, HasCapability, HasRole, Mem, EffectAllowed,
-    ActionWithinTenant, SameTenant, effectKindToString]
+example : actionAllowedD fileReadAction = true := by native_decide
+
+example : ActionAllowed fileReadAction :=
+  (actionAllowedD_sound fileReadAction).1 (by native_decide)
 
 def deniedNetworkCapability : Capability :=
   { id := "cap:network", effectKind := "network.egress", resourcePattern := "*" }
@@ -39,27 +41,26 @@ def deniedNetworkCapability : Capability :=
 def networkEffect : Effect := { kind := .networkEgress }
 
 def networkAction : Action :=
-  { principal := agentPrincipal, capability := deniedNetworkCapability,
-    resource := dataResource, effect := networkEffect }
+  Action.ofLegacy agentPrincipal deniedNetworkCapability dataResource networkEffect
 
-example : ¬ ActionAllowed networkAction := by
-  intro h
-  rcases h with ⟨hc, _, _⟩
-  simp [networkAction, agentPrincipal, deniedNetworkCapability, HasCapability, Mem] at hc
+example : actionAllowedD networkAction = false := by native_decide
+
+example : ¬ ActionAllowed networkAction := fun h => by
+  have ht := (actionAllowedD_sound networkAction).2 h
+  rw [show actionAllowedD networkAction = false by native_decide] at ht
+  cases ht
 
 def safeFileReadEvent : Event :=
   { eventId := "ev-1", kind := .action fileReadAction, decision := .allowed,
-    prevHash := genesisHash, hash := "abc" }
+    reason := "", evidenceRef := "", prevHash := genesisHash, hash := "abc" }
 
-example : EventSafe safeFileReadEvent := by
-  simp [EventSafe, EventKindSafe, safeFileReadEvent, ActionAllowed, fileReadAction,
-    agentPrincipal, readerCapability, dataResource, fileReadEffect,
-    HasCapability, Mem, EffectAllowed, ActionWithinTenant, SameTenant, effectKindToString]
+example : eventSafeD safeFileReadEvent = true := by native_decide
+
+example : EventSafe safeFileReadEvent :=
+  (eventSafeD_sound safeFileReadEvent).1 (by native_decide)
 
 example : TraceSafe [safeFileReadEvent] :=
-  trace_safe_cons _ _ (by simp [EventSafe, EventKindSafe, safeFileReadEvent, ActionAllowed, fileReadAction,
-    agentPrincipal, readerCapability, dataResource, fileReadEffect,
-    HasCapability, Mem, EffectAllowed, ActionWithinTenant, SameTenant, effectKindToString]) trace_safe_empty
+  trace_safe_cons _ _ ((eventSafeD_sound safeFileReadEvent).1 (by native_decide)) trace_safe_empty
 
 def fileReadContract : Contract :=
   { name := "file-read"
@@ -68,21 +69,27 @@ def fileReadContract : Contract :=
     invariant := TraceSafe }
 
 example : SatisfiesContract fileReadContract safeFileReadEvent := by
-  simp [SatisfiesContract, fileReadContract, safeFileReadEvent, EventSafe, EventKindSafe, fileReadAction,
-    agentPrincipal, readerCapability, dataResource, fileReadEffect, ActionAllowed,
-    HasCapability, Mem, EffectAllowed, ActionWithinTenant, SameTenant, effectKindToString]
+  simp [SatisfiesContract, fileReadContract, safeFileReadEvent]
+  constructor
+  · have h := (actionAllowedD_sound fileReadAction).1 (by native_decide)
+    rcases h with ⟨hc, ht, _⟩
+    exact ⟨hc, ht⟩
+  · exact (eventSafeD_sound safeFileReadEvent).1 (by native_decide)
 
 example : TraceSatisfiesContract fileReadContract [safeFileReadEvent] := by
   simp only [TraceSatisfiesContract]
-  simp [SatisfiesContract, fileReadContract, safeFileReadEvent, EventSafe, EventKindSafe, fileReadAction,
-    agentPrincipal, readerCapability, dataResource, fileReadEffect, ActionAllowed,
-    HasCapability, Mem, EffectAllowed, ActionWithinTenant, SameTenant, effectKindToString]
+  simp [SatisfiesContract, fileReadContract, safeFileReadEvent]
+  constructor
+  · have h := (actionAllowedD_sound fileReadAction).1 (by native_decide)
+    rcases h with ⟨hc, ht, _⟩
+    exact ⟨hc, ht⟩
+  · exact (eventSafeD_sound safeFileReadEvent).1 (by native_decide)
 
 def labReleaseCapability : Capability :=
   { id := "cap:lab-release", effectKind := "lab.release", resourcePattern := "lab:*" }
 
 def labReleaseAgent : Principal :=
-  { id := "agent-1", tenantId := "tenant-a", roles := ["cap:lab-release"] }
+  { id := "agent-1", tenantId := "tenant-a", roles := ["lab_operator"], capabilities := [] }
 
 def labResource : Resource :=
   { uri := "lab:experiment-42", tenantId := "tenant-a" }
@@ -90,18 +97,17 @@ def labResource : Resource :=
 def labReleaseEffect : Effect := { kind := .labRelease }
 
 def labReleaseAction : Action :=
-  { principal := labReleaseAgent, capability := labReleaseCapability,
-    resource := labResource, effect := labReleaseEffect }
+  Action.ofLegacy labReleaseAgent labReleaseCapability labResource labReleaseEffect
 
 def labReleaseEvent : Event :=
   { eventId := "ev-lab-release", kind := .action labReleaseAction, decision := .allowed,
-    prevHash := genesisHash, hash := "lab" }
+    reason := "", evidenceRef := "", prevHash := genesisHash, hash := "lab" }
 
 def labReleaseContract : Contract :=
   { name := "lab-release-gate"
     pre := fun p a =>
       HasCapability p labReleaseCapability ∧
-      effectKindToString a.effect.kind = "lab.release"
+      effectKindToString a.primaryEffect.kind = "lab.release"
     post := fun _ _ ev => ev.decision = Decision.allowed ∧ EventSafe ev
     invariant := TraceSafe }
 
@@ -114,9 +120,9 @@ def labReleaseStateful : StatefulContract :=
     stateStep := fun s₀ ev s₁ =>
       s₀.tag = "qc-passed" → ev.decision = Decision.allowed → s₁.tag = "released" }
 
-example : SatisfiesContract labReleaseContract labReleaseEvent := by
-  simp [SatisfiesContract, labReleaseContract, labReleaseEvent, EventSafe, EventKindSafe, labReleaseAction,
-    labReleaseAgent, labReleaseCapability, labResource, labReleaseEffect, ActionAllowed,
-    HasCapability, Mem, EffectAllowed, ActionWithinTenant, SameTenant, effectKindToString]
+example : actionAllowedD labReleaseAction = true := by native_decide
+
+example : EventSafe labReleaseEvent :=
+  (eventSafeD_sound labReleaseEvent).1 (by native_decide)
 
 end PFCore.Examples
