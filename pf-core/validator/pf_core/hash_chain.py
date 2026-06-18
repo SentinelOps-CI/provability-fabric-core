@@ -11,6 +11,17 @@ from pf_core.errors import InvalidHash
 from pf_core.schemas import GENESIS_HASH
 
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
+SHA256_URI = re.compile(r"^sha256:([0-9a-f]{64})$")
+
+
+def normalize_hash(value: str) -> str:
+    """Accept hex64 or `sha256:` URI prefix; return lowercase hex64."""
+    if HEX64.match(value):
+        return value
+    match = SHA256_URI.match(value)
+    if match:
+        return match.group(1)
+    raise InvalidHash(f"expected hex64 or sha256:hex64, got {value!r}", "hash")
 
 
 def canonical_json(obj: Mapping[str, Any]) -> str:
@@ -49,32 +60,31 @@ def compute_trace_hash_from_events(events: List[Mapping[str, Any]]) -> str:
 
 
 def assert_hex64(value: str, path: str) -> None:
-    if not HEX64.match(value):
-        raise InvalidHash(f"expected 64-char lowercase hex, got {value!r}", path)
+    try:
+        normalize_hash(value)
+    except InvalidHash as exc:
+        raise InvalidHash(exc.message, path) from exc
 
 
 def validate_hash_chain(events: List[Mapping[str, Any]]) -> None:
     prev = GENESIS_HASH
     for idx, event in enumerate(events):
         base = f"events[{idx}]"
-        assert_hex64(str(event.get("event_hash", "")), f"{base}.event_hash")
-        assert_hex64(
-            str(event.get("previous_event_hash", "")),
-            f"{base}.previous_event_hash",
-        )
-        if event["previous_event_hash"] != prev:
+        event_hash = normalize_hash(str(event.get("event_hash", "")))
+        prev_field = normalize_hash(str(event.get("previous_event_hash", "")))
+        if prev_field != prev:
             raise InvalidHash(
                 "previous_event_hash mismatch: "
-                f"expected {prev}, got {event['previous_event_hash']}",
+                f"expected {prev}, got {prev_field}",
                 f"{base}.previous_event_hash",
             )
         expected = compute_event_hash(event)
-        if event["event_hash"] != expected:
+        if event_hash != expected:
             raise InvalidHash(
-                f"event_hash mismatch: expected {expected}, got {event['event_hash']}",
+                f"event_hash mismatch: expected {expected}, got {event_hash}",
                 f"{base}.event_hash",
             )
-        prev = event["event_hash"]
+        prev = event_hash
 
 
 def validate_trace_hashes(trace: Mapping[str, Any]) -> None:
@@ -84,9 +94,9 @@ def validate_trace_hashes(trace: Mapping[str, Any]) -> None:
     actual = trace.get("trace_hash")
     if actual is None:
         raise InvalidHash("missing trace_hash", "trace_hash")
-    assert_hex64(str(actual), "trace_hash")
-    if actual != expected:
+    actual_hex = normalize_hash(str(actual))
+    if actual_hex != expected:
         raise InvalidHash(
-            f"trace_hash mismatch: expected {expected}, got {actual}",
+            f"trace_hash mismatch: expected {expected}, got {actual_hex}",
             "trace_hash",
         )
