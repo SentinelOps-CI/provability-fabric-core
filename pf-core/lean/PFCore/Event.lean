@@ -6,7 +6,7 @@ import PFCore.Handoff
 /-!
 # PFCore.Event
 
-Events record a discriminated kind (action or handoff), decision, and hash-chain fields.
+Events record a discriminated kind (action or handoff), decision, audit metadata, and hash-chain fields.
 -/
 
 namespace PFCore
@@ -15,6 +15,8 @@ structure Event where
   eventId : EventId
   kind : EventKind
   decision : Decision
+  reason : String
+  evidenceRef : String
   prevHash : Hash
   hash : Hash
   deriving Repr, DecidableEq, Inhabited
@@ -46,15 +48,17 @@ theorem eventSafeD_sound (ev : Event) :
   · simp [eventSafeD, EventSafe, h, eventKindSafeD_sound]
   · simp [eventSafeD, EventSafe, h, iff_true]
 
-/-- Events embedded in traces with explicit decision status. -/
-inductive EventIn where
-  | allowed (k : EventKind) : EventIn
-  | denied (k : EventKind) : EventIn
+/-- Packaging witness for compiling observations into events (not trace membership). -/
+inductive EventWitness where
+  | allowed (k : EventKind) : EventWitness
+  | denied (k : EventKind) : EventWitness
 
-def EventIn.toEvent (ei : EventIn) (eventId prevHash hash : String) : Event :=
+def EventWitness.toEvent (ei : EventWitness) (eventId reason evidenceRef prevHash hash : String) : Event :=
   match ei with
-  | .allowed k => { eventId, kind := k, decision := .allowed, prevHash, hash }
-  | .denied k => { eventId, kind := k, decision := .denied, prevHash, hash }
+  | .allowed k =>
+    { eventId, kind := k, decision := .allowed, reason, evidenceRef, prevHash, hash }
+  | .denied k =>
+    { eventId, kind := k, decision := .denied, reason, evidenceRef, prevHash, hash }
 
 /--
 ## Plain-English meaning
