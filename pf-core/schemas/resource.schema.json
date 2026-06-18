@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.resource.v0",
+  "title": "PF-Core Resource",
+  "description": "Resource URI with tenant label. Version: pf-core.resource.v0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "uri", "tenant_id"],
+  "properties": {
+    "schema_version": { "const": "pf-core.resource.v0" },
+    "uri": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.resource.v0",
+      "uri": "/data/report.txt",
+      "tenant_id": "tenant-a"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing tenant_id",
+      "value": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "/data/report.txt"
+      }
+    }
+  ]
+}
