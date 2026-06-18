@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.trace.v0",
+  "title": "PF-Core Trace",
+  "description": "Ordered event list with canonical trace_hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "events", "trace_hash"],
+  "properties": {
+    "schema_version": { "const": "pf-core.trace.v0" },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "pf-core.event.v1" }
+    },
+    "trace_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.trace.v0",
+      "events": [],
+      "trace_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "trace_hash mismatch",
+      "value": {
+        "schema_version": "pf-core.trace.v0",
+        "events": [],
+        "trace_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    }
+  ]
+}
