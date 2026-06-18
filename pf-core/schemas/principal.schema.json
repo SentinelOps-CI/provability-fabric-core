@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.principal.v0",
+  "title": "PF-Core Principal",
+  "description": "Agent identity with tenant and role/capability ids. Version: pf-core.principal.v0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "tenant_id", "roles"],
+  "properties": {
+    "schema_version": { "const": "pf-core.principal.v0" },
+    "id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "roles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.principal.v0",
+      "id": "agent-1",
+      "tenant_id": "tenant-a",
+      "roles": ["cap:file-read", "cap:email-send"]
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "empty id",
+      "value": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "",
+        "tenant_id": "tenant-a",
+        "roles": []
+      }
+    }
+  ]
+}
