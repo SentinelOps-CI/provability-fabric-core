@@ -82,6 +82,18 @@ See [ecosystem-inventory.md](../../docs/pf-core/ecosystem-inventory.md) for audi
 
 Compiled events use `pf-core.event.v1` with `event_kind.type = "action"` for observation compile path.
 
+## Live path: provability-fabric sidecar
+
+Untrusted adapter: `adapters/provability-fabric/mcp_sidecar/normalize.py`
+
+1. Sidecar emits audit JSON line (see field map in `docs/pf-core/ecosystem-inventory.md`).
+2. Adapter normalizes to `pf-core.runtime_observation.v1`.
+3. Trusted compile path: `pf core compile-observation` → `pf core check-trace`.
+
+Golden test: `adapters/provability-fabric/tests/test_normalize.py` (not in blocking `pf-core-trusted`).
+
+v0 flat observations remain supported; use `pf-core/scripts/migrate-v0-to-v1.py` for mechanical uplift.
+
 ## Pre-execution behavior
 
 Before a tool call, the adapter must:
