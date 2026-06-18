@@ -17,6 +17,7 @@ pip install -e pf-core/validator
 | `pf core validate-trace --file <trace.json>` | Schema + hash chain |
 | `pf core compile-observation --file <obs.json>` | Compile to event JSON |
 | `pf core check-trace --file <trace.json>` | Safety deciders on trace |
+| `pf core check-trace --lean-check` | Optional Lean replay (`PFCore.Replay`) |
 | `pf core emit-certificate --trace <trace.json>` | Emit certificate |
 | `pf core audit-boundary --root .` | Audit trusted boundary |
 
@@ -36,7 +37,18 @@ pip install -e pf-core/validator
 
 ## Hash chain
 
-SHA-256 lowercase hex over canonical JSON (sorted keys) of the event object excluding `hash`. Genesis `prev_hash` is 64 ASCII `0` digits.
+SHA-256 lowercase hex over canonical JSON (sorted keys) of the event object excluding `event_hash`. Genesis `previous_event_hash` is 64 ASCII `0` digits. Accepts `sha256:` URI prefix via `normalize_hash` (PCS v0.1.0 interop); internal storage remains hex64.
+
+## Windows editable install
+
+If `pip install -e pf-core/validator` fails on Windows, use:
+
+```powershell
+$env:PYTHONPATH = "pf-core/validator"
+python -m pf_core.cli core schema-check --schemas pf-core/schemas
+```
+
+CI uses both editable install and `PYTHONPATH` fallback (`pf-core-trusted.ps1`).
 
 ## Design constraints
 
