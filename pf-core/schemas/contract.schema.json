@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.contract.v0",
+  "title": "PF-Core Contract",
+  "description": "Named contract with structured pre/post/invariant fields. Canonical JSON binding uses sorted keys for contract_hash (see certificate-semantics.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "pre", "post", "invariant"],
+  "properties": {
+    "schema_version": { "const": "pf-core.contract.v0" },
+    "name": { "type": "string", "minLength": 1 },
+    "pre": { "$ref": "#/$defs/contract_pre" },
+    "post": { "$ref": "#/$defs/contract_post" },
+    "invariant": { "$ref": "#/$defs/contract_invariant" }
+  },
+  "$defs": {
+    "contract_pre": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "require_capability": { "type": "string", "minLength": 1 },
+        "require_effect": {
+          "type": "string",
+          "enum": [
+            "file.read",
+            "file.write",
+            "network.egress",
+            "email.send",
+            "handoff.delegate",
+            "mcp.invoke",
+            "lab.release"
+          ]
+        },
+        "require_role": { "type": "string", "minLength": 1 },
+        "require_tenant_match": { "type": "boolean" },
+        "require_policy_ref": { "type": "string", "minLength": 1 },
+        "require_evidence_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "contract_post": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "require_decision": { "type": "string", "enum": ["allowed", "denied"] },
+        "require_event_safe": { "type": "boolean" }
+      }
+    },
+    "contract_invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "require_trace_safe": { "type": "boolean" }
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.contract.v0",
+      "name": "file-read",
+      "pre": {
+        "require_capability": "cap:file-read",
+        "require_effect": "file.read",
+        "require_tenant_match": true
+      },
+      "post": {
+        "require_decision": "allowed",
+        "require_event_safe": true
+      },
+      "invariant": {
+        "require_trace_safe": true
+      }
+    },
+    {
+      "schema_version": "pf-core.contract.v0",
+      "name": "lab-release-gate",
+      "pre": {
+        "require_capability": "cap:lab-release",
+        "require_effect": "lab.release",
+        "require_policy_ref": "policy/lab-gate.v0",
+        "require_evidence_ref": "evidence/lab-signoff.v0"
+      },
+      "post": {
+        "require_decision": "allowed",
+        "require_event_safe": true
+      },
+      "invariant": {
+        "require_trace_safe": true
+      }
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing name",
+      "value": {
+        "schema_version": "pf-core.contract.v0",
+        "pre": { "require_effect": "file.read" },
+        "post": { "require_event_safe": true },
+        "invariant": { "require_trace_safe": true }
+      }
+    },
+    {
+      "description": "unsupported effect in pre",
+      "value": {
+        "schema_version": "pf-core.contract.v0",
+        "name": "bad",
+        "pre": { "require_effect": "custom.unknown" },
+        "post": { "require_event_safe": true },
+        "invariant": { "require_trace_safe": true }
+      }
+    }
+  ]
+}
