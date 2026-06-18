@@ -14,18 +14,43 @@ from pf_core.errors import InvalidSchemaVersion, PFCoreError
 
 SCHEMA_KINDS = {
     "principal": "pf-core.principal.v0",
+    "principal_v1": "pf-core.principal.v1",
     "capability": "pf-core.capability.v0",
     "resource": "pf-core.resource.v0",
     "effect": "pf-core.effect.v0",
     "action": "pf-core.action.v0",
+    "action_v1": "pf-core.action.v1",
     "decision": "pf-core.decision.v0",
     "event": "pf-core.event.v1",
     "trace": "pf-core.trace.v0",
     "contract": "pf-core.contract.v0",
     "handoff": "pf-core.handoff.v0",
+    "handoff_v1": "pf-core.handoff.v1",
     "certificate": "pf-core.certificate.v0",
     "runtime_observation": "pf-core.runtime_observation.v0",
+    "runtime_observation_v1": "pf-core.runtime_observation.v1",
     "claim_classification": "pf-core.claim_classification.v0",
+}
+
+VERSION_TO_KIND = {
+    "pf-core.principal.v0": "principal",
+    "pf-core.principal.v1": "principal_v1",
+    "pf-core.action.v0": "action",
+    "pf-core.action.v1": "action_v1",
+    "pf-core.handoff.v0": "handoff",
+    "pf-core.handoff.v1": "handoff_v1",
+    "pf-core.runtime_observation.v0": "runtime_observation",
+    "pf-core.runtime_observation.v1": "runtime_observation_v1",
+    "pf-core.event.v0": "event",
+    "pf-core.event.v1": "event",
+    "pf-core.trace.v0": "trace",
+    "pf-core.contract.v0": "contract",
+    "pf-core.certificate.v0": "certificate",
+    "pf-core.claim_classification.v0": "claim_classification",
+    "pf-core.capability.v0": "capability",
+    "pf-core.resource.v0": "resource",
+    "pf-core.effect.v0": "effect",
+    "pf-core.decision.v0": "decision",
 }
 
 EFFECT_KINDS = {
@@ -62,12 +87,10 @@ def infer_kind(obj: Mapping[str, Any]) -> str:
     version = obj.get("schema_version")
     if not isinstance(version, str):
         raise InvalidSchemaVersion("pf-core.*.v0", str(version))
-    if version in {"pf-core.event.v0", "pf-core.event.v1"}:
-        return "event"
-    for kind, expected in SCHEMA_KINDS.items():
-        if version == expected:
-            return kind
-    raise InvalidSchemaVersion("pf-core.*.v0", version)
+    kind = VERSION_TO_KIND.get(version)
+    if kind is None:
+        raise InvalidSchemaVersion("pf-core.*.v0", version)
+    return kind
 
 
 def validate_object(obj: Mapping[str, Any], registry: Registry) -> str:
