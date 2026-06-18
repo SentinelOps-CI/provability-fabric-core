@@ -22,6 +22,7 @@ flowchart LR
 | Compile | `runtime_observation` | `event` | `compile.py` (deterministic, A6) |
 | Hash chain | `event` / `trace` | validated digests | `hash_chain.py` (assumes A2) |
 | Safety deciders | `event` / `trace` | boolean | `deciders.py` (T4; soundness T1) |
+| Optional Lean replay | golden trace | `PFCore.Replay` build | `pf core check-trace --lean-check` or `lean-check-trace.sh` |
 | Contract satisfaction | `contract` + `trace` | boolean / errors | `contracts.py` (T4) |
 | Observation contract pre | `contract` + `observation` | policy/evidence refs | `contracts.py` at emit time |
 | Certificate emit | `trace` + `contract` | `certificate` | `emitter.py` |
