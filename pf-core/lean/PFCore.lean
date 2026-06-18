@@ -1,5 +1,6 @@
 import PFCore.Basic
 import PFCore.Principal
+import PFCore.CapabilityCatalog
 import PFCore.Capability
 import PFCore.Effect
 import PFCore.Action
@@ -12,6 +13,7 @@ import PFCore.StatefulContract
 import PFCore.Invariant
 import PFCore.Composition
 import PFCore.Handoff
+import PFCore.Replay
 import PFCore.Certificate
 import PFCore.RuntimeObservation
 import PFCore.Assumption
