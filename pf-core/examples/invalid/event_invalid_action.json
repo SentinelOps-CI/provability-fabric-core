@@ -1,0 +1,36 @@
+{
+  "schema_version": "pf-core.event.v1",
+  "event_id": "ev-bad-action",
+  "event_kind": {
+    "type": "action",
+    "action": {
+      "schema_version": "pf-core.action.v0",
+      "principal": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": []
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:file-read",
+        "effect_kind": "file.read",
+        "resource_pattern": "/data/*"
+      },
+      "resource": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "/data/report.txt",
+        "tenant_id": "tenant-a"
+      },
+      "effect": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "file.read"
+      }
+    }
+  },
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "dc0686e738eacea3cd76f1d6b0f299f6af2128cff0c464d709977119f746119a",
+  "expected_error": "InvalidAction",
+  "must_fail_at": "action_semantics"
+}
