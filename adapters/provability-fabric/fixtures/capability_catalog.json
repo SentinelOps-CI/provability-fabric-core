@@ -1,0 +1,50 @@
+{
+  "capabilities": [
+    {
+      "effect_kind": "file.read",
+      "id": "cap:file-read",
+      "resource_pattern": "/data/*"
+    },
+    {
+      "effect_kind": "file.write",
+      "id": "cap:file-write",
+      "resource_pattern": "/data/*"
+    },
+    {
+      "effect_kind": "network.egress",
+      "id": "cap:network",
+      "resource_pattern": "*"
+    },
+    {
+      "effect_kind": "email.send",
+      "id": "cap:email-send",
+      "resource_pattern": "mailto:*"
+    },
+    {
+      "effect_kind": "handoff.delegate",
+      "id": "cap:handoff",
+      "resource_pattern": "agent:*"
+    },
+    {
+      "effect_kind": "mcp.invoke",
+      "id": "cap:mcp-invoke",
+      "resource_pattern": "mcp:*"
+    },
+    {
+      "effect_kind": "mcp.invoke",
+      "id": "cap:mcp-alt",
+      "resource_pattern": "mcp:alt/*"
+    },
+    {
+      "effect_kind": "lab.release",
+      "id": "cap:lab-release",
+      "resource_pattern": "lab:*"
+    }
+  ],
+  "source_paths": [
+    "config/schemas/",
+    "Policy.lean (reference-only)"
+  ],
+  "source_repo": "provability-fabric",
+  "source_sha": "a567c8dca015fac3890fddbb77dfd254caa720d8"
+}
