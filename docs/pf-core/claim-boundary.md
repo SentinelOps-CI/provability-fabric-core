@@ -8,7 +8,7 @@ Claims about PF-Core must use classification categories below. CI `audit-boundar
 - **Runtime validates:** schema conformance, hash chains, compile determinism, adapter catalogs
 - **Assumptions:** observation fidelity, tenant labels, SHA-256 chaining (`assumptions.md`)
 
-## Classification categories
+## Classification categories (T1–T5)
 
 | ID | Name | Meaning |
 |----|------|---------|
@@ -17,6 +17,21 @@ Claims about PF-Core must use classification categories below. CI `audit-boundar
 | T3 | Assumed | Documented in `assumptions.md` |
 | T4 | Operationally checked | Validator CLI / deciders, not Lean-proved |
 | T5 | Organizational | Process, deployment, human review |
+
+## Spec 10-category map (Phase 5)
+
+| Spec category | PF-Core mapping | Evidence |
+|---------------|-----------------|----------|
+| Lean-proved | **T1** | `pf-core/lean/PFCore/`, `Soundness.lean` |
+| Lean-stated but untrusted | **T1b** (doc-only) | Parent Policy.lean reference; not in TCB |
+| Executable runtime check | **T4** | `deciders.py`, `pf core check-trace` |
+| Schema validation | **T2** | `pf-core/schemas/`, `schema-check` |
+| Replay validation | **T4** + fixture tag `must_fail_at: replay_validation` | `pcs_replay_trace.json`, adapters |
+| Cryptographic assumption | **T3 (A2)** | `hash_chain.py`, `assumptions.md` A2 |
+| Infrastructure assumption | **T3 (A1, A3, …)** | `assumptions.md` |
+| Empirical benchmark result | **Out of scope** | — |
+| Documentation-only claim | **T5** | Runbooks, adapter READMEs |
+| Out of scope | **N/A** | `mission.md` exclusions |
 
 ## Root README claim classification
 
