@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Mapping
 from pf_core.audit import audit_boundary
 from pf_core.compile import compile_observation
 from pf_core.contracts import assert_trace_satisfies_contract, trace_satisfies_contract
+from pf_core.deciders import event_safe, handoff_safe, trace_safe
 from pf_core.emitter import emit_artifacts, emit_certificate
 from pf_core.errors import PFCoreError
 from pf_core.hash_chain import validate_hash_chain, validate_trace_hashes
@@ -96,6 +97,20 @@ def cmd_check_trace(args: argparse.Namespace) -> int:
         raise PFCoreError("UnsafeTrace", "trace failed safety decider")
     if not contract_ok:
         raise PFCoreError("ContractPostconditionFailed", "trace failed contract decider")
+    if getattr(args, "lean_check", False):
+        import subprocess
+
+        lean_root = Path(args.schemas).parent.parent / "lean"
+        proc = subprocess.run(
+            ["lake", "build", "PFCore.Replay"],
+            cwd=lean_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if proc.returncode != 0:
+            raise PFCoreError("LeanReplayFailed", proc.stderr or proc.stdout)
+        print("OK: Lean replay check passed")
     _emit(result)
     return 0
 
@@ -195,6 +210,7 @@ def build_parser() -> argparse.ArgumentParser:
     add_common(p)
     p.add_argument("--file", required=True)
     p.add_argument("--contract", help="contract JSON for satisfaction check")
+    p.add_argument("--lean-check", action="store_true", help="optional Lean replay check")
     p.set_defaults(func=cmd_check_trace)
 
     p = core_sub.add_parser("emit-certificate", help="emit certificate for trace")
