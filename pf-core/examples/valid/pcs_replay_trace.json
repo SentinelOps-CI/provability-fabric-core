@@ -1,0 +1,44 @@
+{
+  "events": [
+    {
+      "decision": "allowed",
+      "event_hash": "cd4881062a64daa31253b0772b86aa7d99705d12f656e5bdfbb5feca5cee6bdf",
+      "event_id": "ev-pcs-lab-release",
+      "event_kind": {
+        "action": {
+          "capability": {
+            "effect_kind": "lab.release",
+            "id": "cap:lab-release",
+            "resource_pattern": "lab:*",
+            "schema_version": "pf-core.capability.v0"
+          },
+          "effect": {
+            "kind": "lab.release",
+            "schema_version": "pf-core.effect.v0"
+          },
+          "principal": {
+            "id": "lab-operator-1",
+            "roles": [
+              "lab_operator"
+            ],
+            "schema_version": "pf-core.principal.v0",
+            "tenant_id": "tenant-lab"
+          },
+          "resource": {
+            "schema_version": "pf-core.resource.v0",
+            "tenant_id": "tenant-lab",
+            "uri": "lab:qc-release"
+          },
+          "schema_version": "pf-core.action.v0"
+        },
+        "type": "action"
+      },
+      "evidence_ref": "evidence/lab-signoff.v0",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "reason": "PCS LabTrust release chain replay",
+      "schema_version": "pf-core.event.v1"
+    }
+  ],
+  "schema_version": "pf-core.trace.v0",
+  "trace_hash": "4468ce5bead527344311c4133658e1309366ce23a88e230049fde33d0cd2452d"
+}
