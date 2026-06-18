@@ -58,6 +58,7 @@ TRUSTED_BOUNDARY_DOC = "docs/pf-core/trusted-boundary.md"
 LEAN_FILES = [
     "pf-core/lean/PFCore/Basic.lean",
     "pf-core/lean/PFCore/Principal.lean",
+    "pf-core/lean/PFCore/CapabilityCatalog.lean",
     "pf-core/lean/PFCore/Capability.lean",
     "pf-core/lean/PFCore/Effect.lean",
     "pf-core/lean/PFCore/Action.lean",
@@ -76,22 +77,27 @@ LEAN_FILES = [
     "pf-core/lean/PFCore/ClaimClassification.lean",
     "pf-core/lean/PFCore/Soundness.lean",
     "pf-core/lean/PFCore/Examples.lean",
+    "pf-core/lean/PFCore/Replay.lean",
 ]
 
 SCHEMA_FILES = [
     "pf-core/schemas/principal.schema.json",
+    "pf-core/schemas/principal.v1.schema.json",
     "pf-core/schemas/capability.schema.json",
     "pf-core/schemas/resource.schema.json",
     "pf-core/schemas/effect.schema.json",
     "pf-core/schemas/action.schema.json",
+    "pf-core/schemas/action.v1.schema.json",
     "pf-core/schemas/decision.schema.json",
     "pf-core/schemas/event.schema.json",
     "pf-core/schemas/event.v1.schema.json",
     "pf-core/schemas/trace.schema.json",
     "pf-core/schemas/contract.schema.json",
     "pf-core/schemas/handoff.schema.json",
+    "pf-core/schemas/handoff.v1.schema.json",
     "pf-core/schemas/certificate.schema.json",
     "pf-core/schemas/runtime_observation.schema.json",
+    "pf-core/schemas/runtime_observation.v1.schema.json",
     "pf-core/schemas/claim_classification.schema.json",
 ]
 
