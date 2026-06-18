@@ -176,9 +176,10 @@ structure EffectPairEncoding where
 /-- Lift effect-pair encoding to a `Contract` with decidable pre on effect kind. -/
 def EffectPairEncoding.toContract (ep : EffectPairEncoding) : Contract :=
   { name := s!"effect-pair:{effectKindToString ep.requiredEffect}"
-    pre := fun _ a => effectKindToString a.effect.kind = effectKindToString ep.requiredEffect
+    pre := fun _ a =>
+      effectKindToString a.primaryEffect.kind = effectKindToString ep.requiredEffect
     post := fun _ a ev =>
-      effectKindToString a.effect.kind = effectKindToString ep.targetEffect ∧ EventSafe ev
+      effectKindToString a.primaryEffect.kind = effectKindToString ep.targetEffect ∧ EventSafe ev
     invariant := fun _ => True }
 
 /-- Build contract from effect kinds (adapter shorthand). -/
