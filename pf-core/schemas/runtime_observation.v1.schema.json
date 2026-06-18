@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.runtime_observation.v1",
+  "title": "PF-Core Runtime Observation (v1)",
+  "description": "Nested principal/action observation with audit and hash chain fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "event_id",
+    "observation_id",
+    "principal",
+    "action",
+    "decision",
+    "policy_ref",
+    "evidence_ref",
+    "runtime_ref",
+    "timestamp",
+    "previous_event_hash",
+    "hash"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.runtime_observation.v1" },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "event_id": { "type": "string", "minLength": 1 },
+    "observation_id": { "type": "string", "minLength": 1 },
+    "principal": { "$ref": "pf-core.principal.v1" },
+    "action": { "$ref": "pf-core.action.v1" },
+    "decision": { "type": "string", "enum": ["allowed", "denied"] },
+    "policy_ref": { "type": "string" },
+    "evidence_ref": { "type": "string" },
+    "runtime_ref": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "previous_event_hash": {
+      "oneOf": [
+        { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      ]
+    },
+    "hash": {
+      "oneOf": [
+        { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      ]
+    },
+    "reason": { "type": "string" }
+  }
+}
