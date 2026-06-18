@@ -7,40 +7,43 @@
       "event_kind": {
         "type": "handoff",
         "handoff": {
-          "schema_version": "pf-core.handoff.v0",
+          "schema_version": "pf-core.handoff.v1",
           "from_principal": {
-            "schema_version": "pf-core.principal.v0",
+            "schema_version": "pf-core.principal.v1",
             "id": "agent-1",
             "tenant_id": "tenant-a",
             "roles": [
-              "cap:file-read",
-              "cap:email-send",
-              "cap:handoff",
-              "cap:mcp-invoke"
-            ]
+              "agent"
+            ],
+            "capabilities": []
           },
           "to_principal": {
-            "schema_version": "pf-core.principal.v0",
+            "schema_version": "pf-core.principal.v1",
             "id": "agent-2",
             "tenant_id": "tenant-b",
             "roles": [
-              "cap:handoff"
-            ]
+              "handoff_delegate"
+            ],
+            "capabilities": []
           },
-          "capability": {
-            "schema_version": "pf-core.capability.v0",
-            "id": "cap:handoff",
-            "effect_kind": "handoff.delegate",
-            "resource_pattern": "agent:*"
-          }
+          "delegated_capabilities": [
+            {
+              "schema_version": "pf-core.capability.v0",
+              "id": "cap:handoff",
+              "effect_kind": "handoff.delegate",
+              "resource_pattern": "agent:*"
+            }
+          ],
+          "reason": "delegate handoff authority to agent-2",
+          "evidence_ref": "evidence/handoff.v0"
         }
       },
       "decision": "allowed",
       "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "3c0b84ac8d4b053a1745235cede4b23f1b3151d5bb6a122f492e2ab51fb3b53d"
+      "event_hash": "858d61f9a22955452051e7bf244681d278fd1943c47b385440618bd3395de3a9"
     }
   ],
-  "trace_hash": "dcc0b6c96d6cd863c22f639c128fd57ec14212e8f16fe448d85a4110d6fa424a",
+  "trace_hash": "c0af605b9a4fd7e381f3b3a0f26bd2c4fdb6cac16d82a4d353ba5749889b58b8",
   "expected_error": "UnsafeTrace",
   "must_fail_at": "decider_check"
 }
