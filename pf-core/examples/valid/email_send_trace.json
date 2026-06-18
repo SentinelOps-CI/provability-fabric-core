@@ -1,0 +1,45 @@
+{
+  "schema_version": "pf-core.trace.v0",
+  "events": [
+    {
+      "schema_version": "pf-core.event.v1",
+      "event_id": "ev-email-1",
+      "event_kind": {
+        "type": "action",
+        "action": {
+          "schema_version": "pf-core.action.v0",
+          "principal": {
+            "schema_version": "pf-core.principal.v0",
+            "id": "agent-1",
+            "tenant_id": "tenant-a",
+            "roles": [
+              "cap:file-read",
+              "cap:email-send",
+              "cap:handoff",
+              "cap:mcp-invoke"
+            ]
+          },
+          "capability": {
+            "schema_version": "pf-core.capability.v0",
+            "id": "cap:email-send",
+            "effect_kind": "email.send",
+            "resource_pattern": "mailto:*"
+          },
+          "resource": {
+            "schema_version": "pf-core.resource.v0",
+            "uri": "mailto:user@example.com",
+            "tenant_id": "tenant-a"
+          },
+          "effect": {
+            "schema_version": "pf-core.effect.v0",
+            "kind": "email.send"
+          }
+        }
+      },
+      "decision": "allowed",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "adb6d4a0e19e3fb8d4f93df0bac5afff134258716ec0ddb29271902e006ad6c5"
+    }
+  ],
+  "trace_hash": "aed3649313e60cbadf784e8211a83189d8d37c85030c7e19b1331093eacaf85e"
+}

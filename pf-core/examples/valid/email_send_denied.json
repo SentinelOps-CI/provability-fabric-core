@@ -1,0 +1,38 @@
+{
+  "schema_version": "pf-core.event.v1",
+  "event_id": "ev-email-denied",
+  "event_kind": {
+    "type": "action",
+    "action": {
+      "schema_version": "pf-core.action.v0",
+      "principal": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": [
+          "cap:file-read",
+          "cap:handoff",
+          "cap:mcp-invoke"
+        ]
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:email-send",
+        "effect_kind": "email.send",
+        "resource_pattern": "mailto:*"
+      },
+      "resource": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "mailto:user@example.com",
+        "tenant_id": "tenant-a"
+      },
+      "effect": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "email.send"
+      }
+    }
+  },
+  "decision": "denied",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "790a7631ad34c1eb5c0535fc5f9e35c61b8c41ea832632b6ffd27248f5c7c5eb"
+}
