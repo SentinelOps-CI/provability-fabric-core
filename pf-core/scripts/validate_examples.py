@@ -37,7 +37,7 @@ def _validate_valid(path: Path, registry) -> None:
         validate_trace_hashes(data)
         if not trace_safe(data):
             raise PFCoreError("UnsafeTrace", f"valid fixture unsafe: {path.name}")
-    elif kind == "handoff":
+    elif kind in {"handoff", "handoff_v1"}:
         if not handoff_safe(data):
             raise PFCoreError("UnsafeHandoff", f"valid fixture unsafe: {path.name}")
     elif kind == "contract":
@@ -59,7 +59,7 @@ def _run_decider_check(data: dict, kind: str, path: Path) -> PFCoreError | None:
             return exc
         if not trace_safe(data):
             return PFCoreError("UnsafeTrace", f"unsafe trace: {path.name}")
-    elif kind == "handoff":
+    elif kind in {"handoff", "handoff_v1"}:
         if not handoff_safe(data):
             return PFCoreError("UnsafeHandoff", f"unsafe handoff: {path.name}")
     return None
