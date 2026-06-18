@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.decision.v0",
+  "title": "PF-Core Decision",
+  "description": "Standalone decision wrapper. Version: pf-core.decision.v0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status"],
+  "properties": {
+    "schema_version": { "const": "pf-core.decision.v0" },
+    "status": { "type": "string", "enum": ["allowed", "denied"] }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.decision.v0",
+      "status": "allowed"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "invalid status",
+      "value": {
+        "schema_version": "pf-core.decision.v0",
+        "status": "maybe"
+      }
+    }
+  ]
+}
