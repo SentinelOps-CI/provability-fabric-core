@@ -43,17 +43,17 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 
 | Criterion | Status | Evidence |
 |-----------|--------|----------|
-| All required schema files present (14) | PASS | `pf-core/schemas/` |
+| All required schema files present (18) | PASS | `pf-core/schemas/` (v0 legacy + v1 primary) |
 | `additionalProperties: false` on trusted schemas | PASS | Schema files |
 | `schema_version` = `pf-core.<kind>.v0` (v1 for events) | PASS | `$id` fields |
-| Valid fixtures pass | PASS | 15 valid (`validate_examples.py`) |
+| Valid fixtures pass | PASS | 16 valid (`validate_examples.py`) |
 | Invalid fixtures fail | PASS | 19 invalid |
 | Invalid fixtures fail for expected reason | PASS | `expected_error` + `must_fail_at` |
 | Negative twin per positive scenario | PASS | `examples.md` scenario table |
 | Schema `examples` + `x-invalid-examples` | PASS | All 14 schema files |
 | Versioning policy documented | PASS | `schema-map.md` |
 | Canonicalization + hash binding documented | PASS | `schema-map.md`, `certificate-semantics.md`, A2 |
-| PCS-style SHA-256 lowercase hex (not `sha256:` prefix) | PASS | `hash_chain.py`, schemas `pattern: ^[0-9a-f]{64}$` |
+| PCS-style SHA-256 lowercase hex; accepts `sha256:` prefix | PASS | `normalize_hash`, `hash_chain.py`, v1 schema `oneOf` |
 
 ## Runtime bridge acceptance
 
@@ -119,7 +119,13 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | `docs/pf-core/README.md` required sections | PASS | What is/isn't, Lean, schemas, build, assumptions, contract, adapter |
 | Root README links (kernel, model, boundary, claim, examples) | PASS | Root `README.md` |
 | Every trusted file listed | PASS | `trusted-boundary.md` + audit |
-| Ecosystem inventory (honest, no live PF wiring) | PASS | `ecosystem-inventory.md` |
+| Ecosystem inventory + extraction log | PASS | `ecosystem-inventory.md`, `extraction-log.md` |
+| External audit brief | PASS | `external-audit-brief.md` |
+| Policy extraction map | PASS | `policy-extraction-map.md` |
+| Phase 5 adapters (untrusted) | PASS | `adapters/` + `adapters-ci.yml` |
+| PCS replay fixture | PASS | `pcs_replay_trace.json` |
+| v0→v1 migration script | PASS | `migrate-v0-to-v1.py` |
+| Lean optional replay | PASS | `Replay.lean`, `--lean-check`, `lean-check-trace.sh` |
 | Non-Lean tutorial | PASS | `tutorial.md` |
 | Theorem / schema / runtime maps | PASS | `theorem-map.md`, `schema-map.md`, `runtime-mapping.md` |
 | Trusted rings diagram doc | PASS | `trusted-rings.md` |
@@ -129,6 +135,7 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Criterion | Status | Evidence |
 |-----------|--------|----------|
 | Job `pf-core-trusted` in GitHub Actions | PASS | `.github/workflows/pf-core-trusted.yml` |
+| Non-blocking `adapters-ci` workflow | PASS | `.github/workflows/adapters-ci.yml` |
 | Matches Makefile gate (`make pf-core-trusted`) | PASS | Workflow runs `make pf-core-trusted` |
 | Fails on sorry/admit/axiom/unsafe | PASS | `audit.py` |
 | Fails on schema/fixture regression | PASS | `schema-check`, `validate_examples.py` |
@@ -158,7 +165,7 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | PCS standard / full release logic | N/A |
 | K8s / WASM / ledger | N/A |
 | LLM semantics / neural verification | N/A |
-| Live Provability Fabric repo integration | N/A (`ecosystem-inventory.md`) |
+| Live Provability Fabric adapter path | PASS | `adapters/provability-fabric/` (untrusted) |
 | Global non-interference (unproved) | N/A (`trusted-boundary.md`) |
 | Lean proof of external tool behavior | N/A |
 
@@ -171,11 +178,11 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Schemas | 11 | 0 | 0 |
 | Runtime bridge | 16 | 0 | 0 |
 | Certificates | 7 | 0 | 0 |
-| Documentation | 15 | 0 | 0 |
-| CI | 7 | 0 | 0 |
+| Documentation | 21 | 0 | 0 |
+| CI | 8 | 0 | 0 |
 | Must-not-do | 9 | 0 | 0 |
-| Out of scope | 0 | 0 | 7 |
-| **Total** | **90** | **0** | **7** |
+| Out of scope | 0 | 0 | 6 |
+| **Total** | **96** | **0** | **6** |
 
 ## Gaps fixed in final pass
 
@@ -190,7 +197,8 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 
 ## Caveats
 
-- Hash digests use 64-char lowercase hex (PCS-style canonical JSON); the `sha256:` URI prefix from some PCS examples is not used — policy is documented consistently.
+- Hash digests stored as 64-char lowercase hex; `sha256:` URI prefix accepted at validation boundary (`normalize_hash`).
 - `pf-core.event.v0` is legacy reference; fixtures use `pf-core.event.v1`.
-- Claim classification uses T1–T5 shorthand; maps to the spec's finer categories in `claim-boundary.md`.
-- Parent Provability Fabric Policy.lean is reference-only; not imported into trusted kernel.
+- Claim classification uses T1–T5 with explicit 10-category map in `claim-boundary.md`.
+- Parent Provability Fabric Policy.lean is reference-only in `adapters/provability-fabric/reference/`.
+- Adapter zone is untrusted; `pf-core-trusted` does not run adapter pytest.
