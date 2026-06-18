@@ -5,6 +5,15 @@ Phase 6 delivers PF-Core operational credibility inside `provability-fabric-core
 - **PF-Core release tag:** `pf-core-v$(cat pf-core/VERSION)` (e.g. `pf-core-v0.6.0`)
 - **Extraction pins:** `docs/pf-core/extraction-log.md`
 
+## Execution checklists
+
+| Repo | Checklist |
+|------|-----------|
+| provability-fabric | [`phase7-provability-fabric-checklist.md`](phase7-provability-fabric-checklist.md) |
+| pcs-core | [`phase7-pcs-checklist.md`](phase7-pcs-checklist.md) |
+| post-incident-proofs | [`phase7-pip-checklist.md`](phase7-pip-checklist.md) |
+| Cross-repo verification | [`phase7-cross-repo-verification.md`](phase7-cross-repo-verification.md) |
+
 ---
 
 ## provability-fabric ([SentinelOps-CI/provability-fabric](https://github.com/SentinelOps-CI/provability-fabric))
