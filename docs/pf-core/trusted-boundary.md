@@ -16,13 +16,14 @@ This document partitions PF-Core into four zones. Artifacts in the **Trusted** z
 
 - `Basic.lean` — core aliases and helpers
 - `Principal.lean` — `Principal`, `HasRole`, `hasRoleD`
-- `Capability.lean` — `Capability`, `HasCapability`
+- `CapabilityCatalog.lean` — pinned catalog, `AllowedCapabilities`, role map
+- `Capability.lean` — `HasCapability`, `CapabilitySubset`
 - `Effect.lean` — closed `EffectKind` enumeration
 - `Action.lean` — `Action`, `ActionAllowed`, `actionAllowedD`
 - `Decision.lean` — `allowed` / `denied`
 - `EventKind.lean` — `EventKind` (`action` / `handoff`)
-- `Event.lean` — `Event`, `EventSafe`, `EventIn`
-- `Trace.lean` — `Trace`, `TraceSafe`, `traceSafeD`
+- `Event.lean` — `Event`, `EventSafe`, `EventWitness`
+- `Trace.lean` — `Trace`, `TraceSafe`, `EventOccurrence`, `traceSafeD`
 - `Contract.lean` — contract algebra (`SatisfiesContract`, `TraceSatisfiesContract`, `seq`)
 - `StatefulContract.lean` — stateful extension over `Contract`
 - `Invariant.lean` — `AllowedEventsAuthorized`
@@ -34,22 +35,27 @@ This document partitions PF-Core into four zones. Artifacts in the **Trusted** z
 - `ClaimClassification.lean` — T1–T5 claim categories
 - `Soundness.lean` — decider soundness theorems
 - `Examples.lean` — checked examples
+- `Replay.lean` — optional Lean replay (`--lean-check`)
 
 ### JSON schemas (`pf-core/schemas/`)
 
 - `principal.schema.json` — `pf-core.principal.v0`
+- `principal.v1.schema.json` — `pf-core.principal.v1`
 - `capability.schema.json` — `pf-core.capability.v0`
 - `resource.schema.json` — `pf-core.resource.v0`
 - `effect.schema.json` — `pf-core.effect.v0`
 - `action.schema.json` — `pf-core.action.v0`
+- `action.v1.schema.json` — `pf-core.action.v1`
 - `decision.schema.json` — `pf-core.decision.v0`
 - `event.schema.json` — `pf-core.event.v0` (legacy reference)
 - `event.v1.schema.json` — `pf-core.event.v1` (action/handoff discriminator)
 - `trace.schema.json` — `pf-core.trace.v0`
 - `contract.schema.json` — `pf-core.contract.v0`
 - `handoff.schema.json` — `pf-core.handoff.v0`
+- `handoff.v1.schema.json` — `pf-core.handoff.v1`
 - `certificate.schema.json` — `pf-core.certificate.v0`
 - `runtime_observation.schema.json` — `pf-core.runtime_observation.v0`
+- `runtime_observation.v1.schema.json` — `pf-core.runtime_observation.v1`
 - `claim_classification.schema.json` — `pf-core.claim_classification.v0`
 
 ### Canonical hash specification
@@ -104,6 +110,13 @@ Documented in `pf-core/docs/certificate-semantics.md`:
 
 - `make pf-core-lean`, `pf-core-schema`, `pf-core-examples`, `pf-core-audit`, `pf-core-trusted`
 - GitHub Actions workflow `.github/workflows/pf-core-trusted.yml`
+- Non-blocking adapter workflow `.github/workflows/adapters-ci.yml`
+
+### Untrusted adapters (`adapters/`)
+
+- `adapters/provability-fabric/` — sidecar normalize, catalog export, Policy.lean reference
+- `adapters/pcs/` — LabTrust replay, PCS hash vector parity tests
+- `adapters/post_incident_proofs/` — forensic cross-check documentation
 
 ### Lean imports (allowlisted)
 
@@ -113,7 +126,8 @@ PF-Core trusted Lean files import only Mathlib-free standard library modules and
 |--------|---------|
 | `Basic.lean` | (stdlib only) |
 | `Principal.lean` | `Basic` |
-| `Capability.lean` | `Basic`, `Principal` |
+| `CapabilityCatalog.lean` | `Basic`, `Principal` |
+| `Capability.lean` | `Basic`, `Principal`, `CapabilityCatalog` |
 | `Effect.lean` | `Basic`, `Principal`, `Capability` |
 | `Decision.lean` | `Basic` |
 | `Action.lean` | `Effect`, `Capability`, `Principal` |
@@ -130,7 +144,7 @@ PF-Core trusted Lean files import only Mathlib-free standard library modules and
 | `Assumption.lean` | `Basic` |
 | `ClaimClassification.lean` | `Basic` |
 | `Soundness.lean` | `Principal` … `Handoff` (decider soundness bundle) |
-| `Examples.lean` | `Action`, `Event`, `Trace`, `Contract`, `StatefulContract`, `Certificate` |
+| `Replay.lean` | `Examples`, `Trace` |
 
 Toolchain: `pf-core/lean/lean-toolchain` (via elan). `set_option autoImplicit false` in `lakefile.lean`.
 
