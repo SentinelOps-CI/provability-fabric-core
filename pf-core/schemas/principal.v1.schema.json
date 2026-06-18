@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.principal.v1",
+  "title": "PF-Core Principal (v1)",
+  "description": "Agent identity with separate RBAC roles and explicit capability grants.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "tenant_id", "roles", "capabilities"],
+  "properties": {
+    "schema_version": { "const": "pf-core.principal.v1" },
+    "id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "roles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
