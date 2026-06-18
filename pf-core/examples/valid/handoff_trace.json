@@ -7,38 +7,41 @@
       "event_kind": {
         "type": "handoff",
         "handoff": {
-          "schema_version": "pf-core.handoff.v0",
+          "schema_version": "pf-core.handoff.v1",
           "from_principal": {
-            "schema_version": "pf-core.principal.v0",
+            "schema_version": "pf-core.principal.v1",
             "id": "agent-1",
             "tenant_id": "tenant-a",
             "roles": [
-              "cap:file-read",
-              "cap:email-send",
-              "cap:handoff",
-              "cap:mcp-invoke"
-            ]
+              "agent"
+            ],
+            "capabilities": []
           },
           "to_principal": {
-            "schema_version": "pf-core.principal.v0",
+            "schema_version": "pf-core.principal.v1",
             "id": "agent-2",
             "tenant_id": "tenant-a",
             "roles": [
-              "cap:handoff"
-            ]
+              "handoff_delegate"
+            ],
+            "capabilities": []
           },
-          "capability": {
-            "schema_version": "pf-core.capability.v0",
-            "id": "cap:handoff",
-            "effect_kind": "handoff.delegate",
-            "resource_pattern": "agent:*"
-          }
+          "delegated_capabilities": [
+            {
+              "schema_version": "pf-core.capability.v0",
+              "id": "cap:handoff",
+              "effect_kind": "handoff.delegate",
+              "resource_pattern": "agent:*"
+            }
+          ],
+          "reason": "delegate handoff authority to agent-2",
+          "evidence_ref": "evidence/handoff.v0"
         }
       },
       "decision": "allowed",
       "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "4228f6c79e228dff7ef42473fd1888bf4514fa8e5455c4055339a29e3bee505d"
+      "event_hash": "1a2d103af67a3ac5e8a0a21479825d535cb907c0a879b5f1bfee9d7a3de5efa4"
     }
   ],
-  "trace_hash": "95375c0f1eca7a71cea5ff878431e89f5114d0a4a2a858b3293b9cac48fbcef7"
+  "trace_hash": "6c382efbfb33573f2e4ad6312e802fc4b2c1f95d46239370edd1bd5db9d46fcd"
 }
