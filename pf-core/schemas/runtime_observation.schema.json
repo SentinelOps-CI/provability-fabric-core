@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.runtime_observation.v0",
+  "title": "PF-Core Runtime Observation",
+  "description": "Adapter input before deterministic compilation to event.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observation_id",
+    "principal_id",
+    "tenant_id",
+    "effect_kind",
+    "resource_uri",
+    "decision",
+    "previous_event_hash"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.runtime_observation.v0" },
+    "observation_id": { "type": "string", "minLength": 1 },
+    "principal_id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "effect_kind": {
+      "type": "string",
+      "enum": [
+        "file.read",
+        "file.write",
+        "network.egress",
+        "email.send",
+        "handoff.delegate",
+        "mcp.invoke",
+        "lab.release"
+      ]
+    },
+    "resource_uri": { "type": "string", "minLength": 1 },
+    "decision": { "type": "string", "enum": ["allowed", "denied"] },
+    "previous_event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "policy_ref": { "type": "string" },
+    "evidence_ref": { "type": "string" },
+    "capability_id": { "type": "string" }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.runtime_observation.v0",
+      "observation_id": "obs-1",
+      "principal_id": "agent-1",
+      "tenant_id": "tenant-a",
+      "effect_kind": "file.read",
+      "resource_uri": "/data/report.txt",
+      "decision": "allowed",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing observation_id",
+      "value": {
+        "schema_version": "pf-core.runtime_observation.v0",
+        "principal_id": "agent-1",
+        "tenant_id": "tenant-a",
+        "effect_kind": "file.read",
+        "resource_uri": "/data/report.txt",
+        "decision": "allowed",
+        "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    }
+  ]
+}
