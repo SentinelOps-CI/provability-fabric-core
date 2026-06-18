@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.handoff.v1",
+  "title": "PF-Core Handoff (v1)",
+  "description": "Delegated capability list with audit metadata; subset of source authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "from_principal",
+    "to_principal",
+    "delegated_capabilities",
+    "reason",
+    "evidence_ref"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.handoff.v1" },
+    "from_principal": { "$ref": "pf-core.principal.v1" },
+    "to_principal": { "$ref": "pf-core.principal.v1" },
+    "delegated_capabilities": {
+      "type": "array",
+      "items": { "$ref": "pf-core.capability.v0" },
+      "minItems": 1
+    },
+    "reason": { "type": "string" },
+    "evidence_ref": { "type": "string" }
+  }
+}
