@@ -16,6 +16,8 @@
   "properties": {
     "schema_version": { "const": "pf-core.event.v1" },
     "event_id": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string" },
+    "evidence_ref": { "type": "string" },
     "event_kind": {
       "oneOf": [
         {
@@ -24,7 +26,12 @@
           "required": ["type", "action"],
           "properties": {
             "type": { "const": "action" },
-            "action": { "$ref": "pf-core.action.v0" }
+            "action": {
+              "oneOf": [
+                { "$ref": "pf-core.action.v0" },
+                { "$ref": "pf-core.action.v1" }
+              ]
+            }
           }
         },
         {
@@ -33,7 +40,12 @@
           "required": ["type", "handoff"],
           "properties": {
             "type": { "const": "handoff" },
-            "handoff": { "$ref": "pf-core.handoff.v0" }
+            "handoff": {
+              "oneOf": [
+                { "$ref": "pf-core.handoff.v0" },
+                { "$ref": "pf-core.handoff.v1" }
+              ]
+            }
           }
         }
       ]
