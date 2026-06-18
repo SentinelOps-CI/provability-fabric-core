@@ -1,30 +1,33 @@
 {
-  "schema_version": "pf-core.handoff.v0",
+  "schema_version": "pf-core.handoff.v1",
   "from_principal": {
-    "schema_version": "pf-core.principal.v0",
+    "schema_version": "pf-core.principal.v1",
     "id": "agent-1",
     "tenant_id": "tenant-a",
     "roles": [
-      "cap:file-read",
-      "cap:email-send",
-      "cap:handoff",
-      "cap:mcp-invoke"
-    ]
+      "agent"
+    ],
+    "capabilities": []
   },
   "to_principal": {
-    "schema_version": "pf-core.principal.v0",
+    "schema_version": "pf-core.principal.v1",
     "id": "agent-2",
     "tenant_id": "tenant-b",
     "roles": [
-      "cap:handoff"
-    ]
+      "handoff_delegate"
+    ],
+    "capabilities": []
   },
-  "capability": {
-    "schema_version": "pf-core.capability.v0",
-    "id": "cap:handoff",
-    "effect_kind": "handoff.delegate",
-    "resource_pattern": "agent:*"
-  },
+  "delegated_capabilities": [
+    {
+      "schema_version": "pf-core.capability.v0",
+      "id": "cap:handoff",
+      "effect_kind": "handoff.delegate",
+      "resource_pattern": "agent:*"
+    }
+  ],
+  "reason": "delegate handoff authority to agent-2",
+  "evidence_ref": "evidence/handoff.v0",
   "expected_error": "UnsafeHandoff",
   "must_fail_at": "decider_check"
 }
