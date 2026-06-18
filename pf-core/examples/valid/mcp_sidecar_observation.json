@@ -1,0 +1,13 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-mcp-1",
+  "principal_id": "agent-1",
+  "tenant_id": "tenant-a",
+  "effect_kind": "mcp.invoke",
+  "resource_uri": "mcp:filesystem/read",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "capability_id": "cap:mcp-invoke",
+  "policy_ref": "policy/default.v0",
+  "evidence_ref": "evidence/mcp-audit.v0"
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "pf-core.event.v1",
+  "event_id": "ev-mcp-1",
+  "event_kind": {
+    "type": "action",
+    "action": {
+      "schema_version": "pf-core.action.v0",
+      "principal": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": [
+          "cap:file-read",
+          "cap:email-send",
+          "cap:handoff",
+          "cap:mcp-invoke"
+        ]
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:mcp-invoke",
+        "effect_kind": "mcp.invoke",
+        "resource_pattern": "mcp:*"
+      },
+      "resource": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "mcp:filesystem/read",
+        "tenant_id": "tenant-a"
+      },
+      "effect": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "mcp.invoke"
+      }
+    }
+  },
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "b16f753ca01a34a2646a3e4cb10013387d2985dc1a8aafa6c092e07ace97c863"
+}
