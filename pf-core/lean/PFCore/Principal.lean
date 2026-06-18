@@ -3,7 +3,7 @@ import PFCore.Basic
 /-!
 # PFCore.Principal
 
-Principal records and role authorization.
+Principal records with separate RBAC roles and explicit capability grants.
 -/
 
 namespace PFCore
@@ -12,6 +12,7 @@ structure Principal where
   id : PrincipalId
   tenantId : TenantId
   roles : List Role
+  capabilities : List CapabilityId
   deriving Repr, DecidableEq, Inhabited
 
 /-- Principal `p` has role `r`. -/
