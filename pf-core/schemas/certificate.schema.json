@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.certificate.v0",
+  "title": "PF-Core Certificate",
+  "description": "Evidence pointer over a safe trace under stated assumptions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "certificate_id",
+    "trace_hash",
+    "contract_hash",
+    "proof_ref",
+    "checker",
+    "checker_version",
+    "claim_class",
+    "assumptions",
+    "event_count",
+    "safe"
+  ],
+  "properties": {
+    "schema_version": { "const": "pf-core.certificate.v0" },
+    "certificate_id": { "type": "string", "minLength": 1 },
+    "trace_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "contract_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "proof_ref": { "type": "string", "minLength": 1 },
+    "checker": { "type": "string", "minLength": 1 },
+    "checker_version": { "type": "string", "minLength": 1 },
+    "claim_class": {
+      "type": "string",
+      "enum": [
+        "Lean-proved",
+        "Schema-guaranteed",
+        "Assumed",
+        "Operationally-checked",
+        "Organizational"
+      ]
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "event_count": { "type": "integer", "minimum": 0 },
+    "safe": { "type": "boolean" },
+    "policy_ref": { "type": "string" },
+    "evidence_ref": { "type": "string" },
+    "created_by": { "type": "string" }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.certificate.v0",
+      "certificate_id": "cert-example",
+      "trace_hash": "0000000000000000000000000000000000000000000000000000000000000001",
+      "contract_hash": "0000000000000000000000000000000000000000000000000000000000000002",
+      "proof_ref": "pf-core/lean/PFCore/Soundness.lean",
+      "checker": "lean4",
+      "checker_version": "4.14.0",
+      "claim_class": "Lean-proved",
+      "assumptions": ["A1", "A2", "A6"],
+      "event_count": 1,
+      "safe": true
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing certificate_id",
+      "value": {
+        "schema_version": "pf-core.certificate.v0",
+        "trace_hash": "0000000000000000000000000000000000000000000000000000000000000001",
+        "contract_hash": "0000000000000000000000000000000000000000000000000000000000000002",
+        "proof_ref": "pf-core/lean/PFCore/Soundness.lean",
+        "checker": "lean4",
+        "checker_version": "4.14.0",
+        "claim_class": "Lean-proved",
+        "assumptions": ["A1"],
+        "event_count": 1,
+        "safe": true
+      }
+    }
+  ]
+}
