@@ -1,0 +1,36 @@
+{
+  "schema_version": "pf-core.event.v1",
+  "event_id": "ev-lab-release",
+  "event_kind": {
+    "type": "action",
+    "action": {
+      "schema_version": "pf-core.action.v0",
+      "principal": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": [
+          "cap:lab-release"
+        ]
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:lab-release",
+        "effect_kind": "lab.release",
+        "resource_pattern": "lab:*"
+      },
+      "resource": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "lab:experiment-42",
+        "tenant_id": "tenant-a"
+      },
+      "effect": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "lab.release"
+      }
+    }
+  },
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "cb5b5e61bd43147e5071b1b3adab74b4e9921e9769b4f947436a4e1a278fefe7"
+}

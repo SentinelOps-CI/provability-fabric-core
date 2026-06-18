@@ -1,0 +1,13 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-lab-release",
+  "principal_id": "agent-1",
+  "tenant_id": "tenant-a",
+  "effect_kind": "lab.release",
+  "resource_uri": "lab:experiment-42",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "capability_id": "cap:lab-release",
+  "policy_ref": "policy/lab-gate.v0",
+  "evidence_ref": "evidence/lab-signoff.v0"
+}
