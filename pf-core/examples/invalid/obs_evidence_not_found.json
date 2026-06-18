@@ -1,0 +1,13 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-bad-evidence",
+  "principal_id": "agent-1",
+  "tenant_id": "tenant-a",
+  "effect_kind": "file.read",
+  "resource_uri": "/data/x",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "evidence_ref": "evidence/missing.v0",
+  "expected_error": "EvidenceRefNotFound",
+  "must_fail_at": "runtime_to_trace"
+}

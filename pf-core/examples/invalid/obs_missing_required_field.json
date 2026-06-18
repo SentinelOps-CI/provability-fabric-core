@@ -1,0 +1,11 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-missing",
+  "tenant_id": "tenant-a",
+  "effect_kind": "file.read",
+  "resource_uri": "/data/x",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "expected_error": "MissingRequiredField",
+  "must_fail_at": "runtime_to_trace"
+}

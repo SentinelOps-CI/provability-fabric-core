@@ -1,0 +1,12 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-bad-effect",
+  "principal_id": "agent-1",
+  "tenant_id": "tenant-a",
+  "effect_kind": "custom.unknown",
+  "resource_uri": "/data/x",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "expected_error": "UnsupportedEffect",
+  "must_fail_at": "runtime_to_trace"
+}
