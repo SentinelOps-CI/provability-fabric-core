@@ -1,0 +1,14 @@
+{
+  "schema_version": "pf-core.contract.v0",
+  "pre": {
+    "require_effect": "file.read"
+  },
+  "post": {
+    "require_event_safe": true
+  },
+  "invariant": {
+    "require_trace_safe": true
+  },
+  "expected_error": "SchemaValidationError",
+  "must_fail_at": "schema_validation"
+}
