@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pf-core.effect.v0",
+  "title": "PF-Core Effect",
+  "description": "Closed effect enumeration. Version: pf-core.effect.v0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind"],
+  "properties": {
+    "schema_version": { "const": "pf-core.effect.v0" },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "file.read",
+        "file.write",
+        "network.egress",
+        "email.send",
+        "handoff.delegate",
+        "mcp.invoke",
+        "lab.release"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.effect.v0",
+      "kind": "file.read"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "unknown effect kind",
+      "value": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "custom.unknown"
+      }
+    }
+  ]
+}
