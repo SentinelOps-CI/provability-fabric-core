@@ -1,0 +1,39 @@
+{
+  "schema_version": "pf-core.event.v1",
+  "event_id": "ev-net-bad",
+  "event_kind": {
+    "type": "action",
+    "action": {
+      "schema_version": "pf-core.action.v0",
+      "principal": {
+        "schema_version": "pf-core.principal.v0",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": [
+          "cap:file-read",
+          "cap:email-send"
+        ]
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:network",
+        "effect_kind": "network.egress",
+        "resource_pattern": "*"
+      },
+      "resource": {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "https://example.com",
+        "tenant_id": "tenant-a"
+      },
+      "effect": {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "network.egress"
+      }
+    }
+  },
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "fb6354e3ae09f1b5181f6fdf2df168499446ce2028b1834e0c5b62b0c16e6886",
+  "expected_error": "UnsafeEvent",
+  "must_fail_at": "decider_check"
+}
