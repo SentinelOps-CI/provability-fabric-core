@@ -1,0 +1,46 @@
+name: adapters-ci
+
+on:
+  push:
+    paths:
+      - "adapters/**"
+      - ".github/workflows/adapters-ci.yml"
+  pull_request:
+    paths:
+      - "adapters/**"
+      - ".github/workflows/adapters-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  adapters:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone sibling repos at pinned SHAs
+        run: |
+          git clone --depth 1 https://github.com/SentinelOps-CI/provability-fabric /tmp/provability-fabric
+          git clone --depth 1 --branch v0.1.0 https://github.com/SentinelOps-CI/pcs-core /tmp/pcs-core
+          git clone --depth 1 https://github.com/SentinelOps-CI/post-incident-proofs /tmp/post-incident-proofs
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PF-Core validator
+        run: |
+          python -m pip install -q setuptools wheel jsonschema referencing pytest
+          python -m pip install -q -e pf-core/validator
+
+      - name: Export capability catalog
+        run: python adapters/provability-fabric/export_catalog.py
+
+      - name: pytest provability-fabric adapter
+        run: pytest -q adapters/provability-fabric/tests/
+
+      - name: pytest pcs adapter (hash vectors)
+        run: pytest -q adapters/pcs/tests/
+
+      - name: Generate pcs replay trace fixture
+        run: python adapters/pcs/normalize_release.py
