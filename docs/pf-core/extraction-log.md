@@ -4,7 +4,7 @@ Pinned sibling repositories for adapter extraction (local dev layout: sibling cl
 
 | Repository | Pin | SHA |
 |------------|-----|-----|
-| provability-fabric-core | `main` (this repo) | recorded at release |
+| provability-fabric-core | release **`pf-core-v0.6.0`** | tag at release |
 | provability-fabric | `main` | `a567c8dca015fac3890fddbb77dfd254caa720d8` |
 | pcs-core | tag **`v0.1.0`** | `280bbea4bf3bf3e45004b6254bc72b603030f179` |
 | post-incident-proofs | `main` | `d5f3051b927f2f68cabac1a37c85d5113b9d77ad` |

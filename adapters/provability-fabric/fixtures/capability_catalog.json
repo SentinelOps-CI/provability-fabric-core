@@ -41,9 +41,61 @@
       "resource_pattern": "lab:*"
     }
   ],
+  "documented_policy_gaps": [
+    {
+      "parent_tool": "LogSpend",
+      "pf_core_behavior": "deny",
+      "reason": "no matching capability in CapabilityCatalog.lean",
+      "vector_ids": [
+        "log_spend_allow_finance"
+      ]
+    },
+    {
+      "parent_tool": "LogAction",
+      "pf_core_behavior": "deny",
+      "reason": "no matching capability in CapabilityCatalog.lean",
+      "vector_ids": [
+        "log_action_allow_logger"
+      ]
+    }
+  ],
+  "parent_schema_path": null,
+  "principal_roles_by_capability": {
+    "cap:email-send": [
+      "email_user",
+      "agent"
+    ],
+    "cap:file-read": [
+      "file_reader",
+      "file_admin",
+      "agent"
+    ],
+    "cap:file-write": [
+      "file_admin"
+    ],
+    "cap:handoff": [
+      "handoff_delegate",
+      "agent"
+    ],
+    "cap:lab-release": [
+      "lab_operator"
+    ],
+    "cap:mcp-alt": [
+      "mcp_user"
+    ],
+    "cap:mcp-invoke": [
+      "mcp_user",
+      "agent"
+    ],
+    "cap:network": [
+      "network_user"
+    ]
+  },
+  "source_mode": "manual_mirror_of_lean_catalog",
   "source_paths": [
-    "config/schemas/",
-    "Policy.lean (reference-only)"
+    "pf-core/lean/PFCore/CapabilityCatalog.lean (proof authority)",
+    "provability-fabric/config/schemas/ (reference; optional sibling read)",
+    "Policy.lean (reference-only; LogSpend/LogAction not in TCB)"
   ],
   "source_repo": "provability-fabric",
   "source_sha": "a567c8dca015fac3890fddbb77dfd254caa720d8"

@@ -9,5 +9,6 @@
   "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "evidence_ref": "evidence/missing.v0",
   "expected_error": "EvidenceRefNotFound",
-  "must_fail_at": "runtime_to_trace"
+  "must_fail_at": "runtime_to_trace",
+  "legacy": true
 }

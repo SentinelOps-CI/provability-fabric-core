@@ -42,6 +42,14 @@ pf core emit-artifacts \
   --out-dir /tmp/pf-core-artifacts
 ```
 
+## Lean replay scope
+
+`pf core check-trace --lean-check` builds `PFCore.Replay` against **three release golden traces** only (`file_read_allowed_trace.json`, `handoff_trace.json`, `pcs_replay_trace.json`). This is an intentional performance gate: Python deciders validate all traces; Lean replay confirms decider soundness on pinned goldens without deserializing arbitrary trace JSON in Lean.
+
+## JSON certificate metadata superset
+
+Wire certificates (`pf-core.certificate.v0`) include `schema_version`, `checker_version`, and organizational fields (`created_by`) that are not modeled in the Lean `Certificate` struct. Lean proves the `safe` bit against `TraceSafe`; JSON fields are runtime metadata documented here and in `runtime-mapping.md`.
+
 ## Trusted claims (T1 + T4)
 
 - If `safe` is true and deciders match Lean, every allowed event has `ActionAllowed` action.

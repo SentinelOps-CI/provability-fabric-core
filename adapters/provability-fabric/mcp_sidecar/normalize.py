@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Mapping
+from pathlib import Path
+from typing import Any, Dict, List, Mapping
 
 # Sidecar audit field names (provability-fabric runtime/sidecar-watcher patterns).
 _SIDEcar_TO_OBS: Dict[str, str] = {
@@ -24,6 +25,16 @@ _SIDEcar_TO_OBS: Dict[str, str] = {
     "reason": "reason",
 }
 
+_CATALOG_PATH = Path(__file__).resolve().parents[1] / "fixtures" / "capability_catalog.json"
+_CATALOG_CACHE: Dict[str, Any] | None = None
+
+
+def _load_catalog() -> Dict[str, Any]:
+    global _CATALOG_CACHE
+    if _CATALOG_CACHE is None:
+        _CATALOG_CACHE = json.loads(_CATALOG_PATH.read_text(encoding="utf-8"))
+    return _CATALOG_CACHE
+
 
 def _map_decision(value: Any) -> str:
     text = str(value).lower()
@@ -32,6 +43,31 @@ def _map_decision(value: Any) -> str:
     if text in {"deny", "denied", "block", "blocked"}:
         return "denied"
     return text
+
+
+def _resolve_capability_id(effect_kind: str, capability_id: str | None) -> str:
+    catalog = _load_catalog()
+    capabilities = catalog.get("capabilities", [])
+    matches = [c for c in capabilities if c.get("effect_kind") == effect_kind]
+    if capability_id:
+        return capability_id
+    if len(matches) == 1:
+        return str(matches[0]["id"])
+    if len(matches) > 1:
+        raise ValueError(
+            f"capability_hint required for effect {effect_kind}; "
+            f"matches {[c['id'] for c in matches]}"
+        )
+    raise ValueError(f"no catalog capability for effect {effect_kind}")
+
+
+def _roles_for_capability(capability_id: str) -> List[str]:
+    catalog = _load_catalog()
+    role_map = catalog.get("principal_roles_by_capability", {})
+    roles = role_map.get(capability_id)
+    if isinstance(roles, list) and roles:
+        return [str(r) for r in roles]
+    return ["mcp_user"]
 
 
 def normalize_sidecar_line(line: Mapping[str, Any]) -> Dict[str, Any]:
@@ -51,10 +87,11 @@ def normalize_sidecar_line(line: Mapping[str, Any]) -> Dict[str, Any]:
     decision = _map_decision(flat.get("decision", "denied"))
     prev_hash = flat.get("previous_event_hash", "0" * 64)
 
-    capability_id = flat.get("capability_id")
+    capability_id = _resolve_capability_id(effect_kind, flat.get("capability_id"))
+    roles = _roles_for_capability(capability_id)
     cap_entry = {
         "schema_version": "pf-core.capability.v0",
-        "id": capability_id or "cap:mcp-invoke",
+        "id": capability_id,
         "effect_kind": effect_kind,
         "resource_pattern": "mcp:*",
     }
@@ -63,8 +100,8 @@ def normalize_sidecar_line(line: Mapping[str, Any]) -> Dict[str, Any]:
         "schema_version": "pf-core.principal.v1",
         "id": principal_id,
         "tenant_id": tenant_id,
-        "roles": ["mcp_user"],
-        "capabilities": [capability_id] if capability_id else [],
+        "roles": roles,
+        "capabilities": [capability_id],
     }
 
     action: Dict[str, Any] = {

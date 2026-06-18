@@ -22,6 +22,14 @@ def _load_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_trace_fixture(path: Path) -> Dict[str, Any]:
+    """Load trace JSON, stripping invalid-fixture metadata fields."""
+    data = _load_json(path)
+    data.pop("expected_error", None)
+    data.pop("must_fail_at", None)
+    return data
+
+
 def _emit(obj: Mapping[str, Any]) -> None:
     print(json.dumps(obj, indent=2, sort_keys=True))
 
@@ -75,7 +83,7 @@ def cmd_compile_observation(args: argparse.Namespace) -> int:
 
 def cmd_check_trace(args: argparse.Namespace) -> int:
     registry = load_registry(Path(args.schemas))
-    trace = _load_json(Path(args.file))
+    trace = _load_trace_fixture(Path(args.file))
     validate_object(trace, registry)
     validate_trace_hashes(trace)
     contract = _load_json(Path(args.contract)) if args.contract else {
@@ -100,7 +108,7 @@ def cmd_check_trace(args: argparse.Namespace) -> int:
     if getattr(args, "lean_check", False):
         import subprocess
 
-        lean_root = Path(args.schemas).parent.parent / "lean"
+        lean_root = Path(args.schemas).parent / "lean"
         proc = subprocess.run(
             ["lake", "build", "PFCore.Replay"],
             cwd=lean_root,
@@ -231,6 +239,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = core_sub.add_parser("audit-boundary", help="audit trusted boundary docs/code")
     p.add_argument("--root", default=".")
     p.set_defaults(func=cmd_audit_boundary)
+
+    p = core_sub.add_parser("validate-handoff", help="validate handoff schema and safety")
+    add_common(p)
+    p.add_argument("--file", required=True)
+    p.set_defaults(func=cmd_validate_handoff)
 
     return parser
 

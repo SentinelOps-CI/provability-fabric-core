@@ -10,6 +10,23 @@ from pf_core.event_kind import event_action
 from pf_core.schemas import EFFECT_KINDS
 
 
+def _action_resource_effect(action: Mapping[str, Any]) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    """Primary resource and effect for v0 or v1 action shapes."""
+    if action.get("schema_version") == "pf-core.action.v1":
+        reads = action.get("reads", [])
+        resource = reads[0] if reads else {}
+        effects = action.get("effects", [])
+        effect = effects[0] if effects else {}
+        return resource, effect
+    return action.get("resource", {}), action.get("effect", {})
+
+
+def primary_action_effect_kind(action: Mapping[str, Any]) -> str:
+    """Return the primary effect kind for v0 or v1 action shapes."""
+    _, effect = _action_resource_effect(action)
+    return str(effect.get("kind", ""))
+
+
 def _check_pre(contract: Mapping[str, Any], event: Mapping[str, Any]) -> bool:
     pre = contract.get("pre") or {}
     try:
@@ -18,8 +35,7 @@ def _check_pre(contract: Mapping[str, Any], event: Mapping[str, Any]) -> bool:
         return True
     principal = action["principal"]
     capability = action["capability"]
-    resource = action["resource"]
-    effect = action["effect"]
+    resource, effect = _action_resource_effect(action)
 
     cap_req = pre.get("require_capability")
     if cap_req and cap_req not in principal.get("roles", []):

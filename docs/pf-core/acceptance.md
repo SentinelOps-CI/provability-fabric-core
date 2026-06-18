@@ -135,13 +135,33 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Criterion | Status | Evidence |
 |-----------|--------|----------|
 | Job `pf-core-trusted` in GitHub Actions | PASS | `.github/workflows/pf-core-trusted.yml` |
-| Non-blocking `adapters-ci` workflow | PASS | `.github/workflows/adapters-ci.yml` |
+| Blocking `pf-core-e2e` on `main` | PASS | `.github/workflows/pf-core-e2e.yml` |
+| Blocking `adapters-ci` on `main` (pinned SHAs) | PASS | `.github/workflows/adapters-ci.yml` |
 | Matches Makefile gate (`make pf-core-trusted`) | PASS | Workflow runs `make pf-core-trusted` |
+| `make pf-core-e2e` target | PASS | `Makefile`, `e2e-replay-gate.sh` |
 | Fails on sorry/admit/axiom/unsafe | PASS | `audit.py` |
 | Fails on schema/fixture regression | PASS | `schema-check`, `validate_examples.py` |
+| Fails on v0 fixtures in valid path | PASS | `audit.py` `audit_v1_primary_fixtures` |
 | Fails on missing theorem docstring | PASS | `audit.py` |
 | Fails on forbidden claim phrase | PASS | `audit.py` `FORBIDDEN_PHRASES` |
 | Fails on undocumented trusted file | PASS | `audit.py` boundary check |
+| Catalog drift fails adapter CI | PASS | `test_catalog_export_matches_lean` |
+
+## Phase 6 — Real Vision (operational credibility)
+
+| Criterion | Status | Evidence |
+|-----------|--------|----------|
+| End-to-end replay gate (sidecar → certificate) | PASS | `e2e-replay-gate.sh`, `e2e-replay-gate.ps1` |
+| E2E scenarios: allow, deny, MCP, handoff, PCS, tamper | PASS | Gate scripts |
+| Policy correspondence (20+ vectors) | PASS | `policy_correspondence_vectors.json` (23), `test_policy_correspondence.py` |
+| v1-primary trusted path | PASS | `schema-map.md`, `audit.py`, `compile.py` deprecation |
+| Adapter pinned SHAs in CI | PASS | `adapters-ci.yml`, `extraction-log.md` |
+| Lean replay on 3 golden traces | PASS | `Replay.lean`, `--lean-check` in e2e job |
+| `pf-core/VERSION` semver file | PASS | `pf-core/VERSION` |
+| Release checklist | PASS | `docs/pf-core/release-checklist.md` |
+| External audit brief v2 (e2e + correspondence) | PASS | `external-audit-brief.md` |
+| Phase 7 handoff doc | PASS | `docs/pf-core/phase7-handoff.md` |
+| PIP smoke test | PASS | `adapters/post_incident_proofs/smoke_test.sh` |
 
 ## Must-not-do (hard prohibitions)
 
@@ -179,10 +199,11 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Runtime bridge | 16 | 0 | 0 |
 | Certificates | 7 | 0 | 0 |
 | Documentation | 21 | 0 | 0 |
-| CI | 8 | 0 | 0 |
+| CI | 12 | 0 | 0 |
+| Phase 6 | 11 | 0 | 0 |
 | Must-not-do | 9 | 0 | 0 |
 | Out of scope | 0 | 0 | 6 |
-| **Total** | **96** | **0** | **6** |
+| **Total** | **119** | **0** | **6** |
 
 ## Gaps fixed in final pass
 
@@ -198,7 +219,10 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 ## Caveats
 
 - Hash digests stored as 64-char lowercase hex; `sha256:` URI prefix accepted at validation boundary (`normalize_hash`).
-- `pf-core.event.v0` is legacy reference; fixtures use `pf-core.event.v1`.
+- `pf-core.event.v0` and `pf-core.runtime_observation.v0` are legacy reference; valid fixtures use v1 only.
 - Claim classification uses T1–T5 with explicit 10-category map in `claim-boundary.md`.
-- Parent Provability Fabric Policy.lean is reference-only in `adapters/provability-fabric/reference/`.
-- Adapter zone is untrusted; `pf-core-trusted` does not run adapter pytest.
+- Parent Provability Fabric Policy.lean is reference-only in `adapters/provability-fabric/reference/`; correspondence tested on extractable fragment only.
+- Adapter zone is untrusted; `pf-core-trusted` does not run adapter pytest (adapter CI is separate, blocking on `main`).
+- Phase 7 parent-repo emitters documented in `phase7-handoff.md` (not implemented in Phase 6).
+- External audit per `external-audit-brief.md` v2 is prepared but not yet executed; schedule independent review before organizational production claims beyond TCB gates.
+- Assessment §10 bridge items closed in Phase A (v0.6.0): v1 handoff audit lines, `validate-handoff` CLI, adapter contract v1 alignment, catalog export honesty, sidecar role mapping from fixture.

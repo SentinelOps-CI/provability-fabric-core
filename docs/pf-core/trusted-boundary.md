@@ -109,8 +109,18 @@ Documented in `pf-core/docs/certificate-semantics.md`:
 ### Makefile targets and CI
 
 - `make pf-core-lean`, `pf-core-schema`, `pf-core-examples`, `pf-core-audit`, `pf-core-trusted`
-- GitHub Actions workflow `.github/workflows/pf-core-trusted.yml`
-- Non-blocking adapter workflow `.github/workflows/adapters-ci.yml`
+- `make pf-core-e2e` — blocking end-to-end replay gate (Phase 6)
+- GitHub Actions: `.github/workflows/pf-core-trusted.yml`, `.github/workflows/pf-core-e2e.yml`
+- Adapter workflow `.github/workflows/adapters-ci.yml` — **blocking on `main`**, optional on PRs
+
+### Capability catalog (two-tier authority)
+
+| Tier | Source | Role |
+|------|--------|------|
+| **Proof authority** | `pf-core/lean/PFCore/CapabilityCatalog.lean` | Lean theorems, `actionAllowedD` |
+| **Runtime adapter input** | `adapters/provability-fabric/fixtures/capability_catalog.json` | Optional merge in `compile.py` (T5 organizational) |
+
+CI fails on catalog drift: `export_catalog.py` output must match Lean (`test_catalog_export_matches_lean`).
 
 ### Untrusted adapters (`adapters/`)
 

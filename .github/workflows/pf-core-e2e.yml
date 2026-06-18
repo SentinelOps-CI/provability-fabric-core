@@ -1,0 +1,42 @@
+name: pf-core-e2e
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pf-core/**"
+      - "adapters/**"
+      - ".github/workflows/pf-core-e2e.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "pf-core/**"
+      - "adapters/**"
+      - ".github/workflows/pf-core-e2e.yml"
+  workflow_dispatch:
+
+jobs:
+  pf-core-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+      - name: Add elan to PATH
+        run: echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install jsonschema referencing
+          pip install -e pf-core/validator
+
+      - name: Run pf-core-e2e gate
+        run: make pf-core-e2e
+        env:
+          PYTHONPATH: ${{ github.workspace }}/pf-core/validator

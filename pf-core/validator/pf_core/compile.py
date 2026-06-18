@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional
 
@@ -182,6 +183,13 @@ def compile_observation(
     version = _check_schema_version(obs)
     if version == "pf-core.runtime_observation.v1":
         return compile_observation_v1(obs)
+
+    warnings.warn(
+        "pf-core.runtime_observation.v0 is deprecated; use pf-core.runtime_observation.v1 "
+        "(see pf-core/scripts/migrate-v0-to-v1.py)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     for field in (
         "observation_id",

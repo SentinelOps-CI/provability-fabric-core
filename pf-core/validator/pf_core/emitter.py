@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Mapping, Optional
 from pf_core.audit_line import format_audit_line
 from pf_core.event_kind import event_action
 from pf_core.compile import compile_observation
-from pf_core.contracts import assert_observation_contract_pre
+from pf_core.contracts import assert_observation_contract_pre, primary_action_effect_kind
 from pf_core.deciders import trace_safe
 from pf_core.errors import PFCoreError
 from pf_core.hash_chain import compute_trace_hash, validate_trace_hashes
@@ -110,7 +110,7 @@ def emit_artifacts(
     contract_obj = contract or {
         "schema_version": "pf-core.contract.v0",
         "name": "default-effect",
-        "pre": {"require_effect": event_action(event)["effect"]["kind"]},
+        "pre": {"require_effect": primary_action_effect_kind(event_action(event))},
         "post": {"require_event_safe": True},
         "invariant": {"require_trace_safe": True},
     }
@@ -152,3 +152,28 @@ def emit_artifacts(
             path.write_text(json.dumps(obj, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     return paths
+
+
+def emit_audit_for_trace(
+    trace: Mapping[str, Any],
+    *,
+    out_path: Path,
+    trace_id: str,
+    observation: Mapping[str, Any],
+    runtime_id: str = "pf-core-adapter",
+    reason: str = "adapter_compile",
+) -> Path:
+    """Write audit.jsonl lines for each event in an existing trace."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8") as fh:
+        for event in trace.get("events", []):
+            audit_line = format_audit_line(
+                trace_id=trace_id,
+                event=event,
+                trace=trace,
+                observation=observation,
+                runtime_id=runtime_id,
+                reason=reason,
+            )
+            fh.write(json.dumps(audit_line, sort_keys=True) + "\n")
+    return out_path

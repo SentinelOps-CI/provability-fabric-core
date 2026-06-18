@@ -10,5 +10,6 @@
   "policy_ref": "policy/default.v0",
   "evidence_ref": "evidence/mcp-audit.v0",
   "expected_error": "AmbiguousMapping",
-  "must_fail_at": "runtime_to_trace"
+  "must_fail_at": "runtime_to_trace",
+  "legacy": true
 }

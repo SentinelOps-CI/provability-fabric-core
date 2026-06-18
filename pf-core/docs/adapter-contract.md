@@ -10,7 +10,19 @@ Adapters map runtime observations to PF-Core events without LLM or network calls
 
 ## Input
 
-`runtime_observation` JSON (`pf-core.runtime_observation.v0`).
+`runtime_observation` JSON (`pf-core.runtime_observation.v1` is normative; v0 is legacy reference only).
+
+Required v1 fields: `trace_id`, `event_id`, `observation_id`, nested `principal`, nested `action`, `decision`, `policy_ref`, `evidence_ref`, `runtime_ref`, `timestamp`, `previous_event_hash`, `hash`.
+
+Nested shapes:
+
+| Object | Schema | Key fields |
+|--------|--------|------------|
+| `principal` | `pf-core.principal.v1` | `id`, `tenant_id`, `roles[]`, `capabilities[]` |
+| `action` | `pf-core.action.v1` | `id`, `principal`, `capability`, `effects[]`, `reads[]`, `writes[]` |
+| `action.capability` | `pf-core.capability.v0` | `id`, `effect_kind`, `resource_pattern` |
+
+Handoff events are authored as `pf-core.event.v1` with `event_kind.type = "handoff"` (see `handoff.v1.schema.json`); they are not produced by the observation compile path today.
 
 ## Output artifact set
 
@@ -30,12 +42,15 @@ CLI:
 pf core emit-artifacts \
   --file pf-core/examples/valid/mcp_sidecar_observation.json \
   --out-dir ./artifacts
+
+pf core validate-handoff \
+  --file pf-core/examples/valid/handoff.json
 ```
 
 ## Compile requirements
 
 1. **Determinism** — `compile(input) == compile(input)` (tested in `validate_examples.py`)
-2. **Capability resolution** — set `capability_id` when multiple capabilities share an `effect_kind`
+2. **Capability resolution** — set `action.capability.id` when multiple capabilities share an `effect_kind`
 3. **Policy refs** — must exist in `POLICY_CATALOG` or `PolicyRefNotFound`
 4. **Evidence refs** — if present, must exist in `EVIDENCE_CATALOG` or `EvidenceRefNotFound`
 5. **Decision coherence** — unauthorized `allowed` downgrades to `denied`
@@ -67,20 +82,27 @@ pf core emit-artifacts \
 
 See [ecosystem-inventory.md](../../docs/pf-core/ecosystem-inventory.md) for audit-line field mapping (reference only).
 
-| MCP audit field (example) | `runtime_observation` field |
-|---------------------------|----------------------------|
+| MCP audit field (example) | `runtime_observation.v1` field |
+|---------------------------|--------------------------------|
 | `request_id` | `observation_id` |
-| `agent_id` | `principal_id` |
-| `tenant` | `tenant_id` |
-| `tool_effect` | `effect_kind` |
-| `resource` | `resource_uri` |
+| `trace_id` | `trace_id` |
+| `event_id` | `event_id` |
+| `agent_id` | `principal.id` |
+| `tenant` | `principal.tenant_id` |
+| `tool_effect` | `action.effects[].kind` |
+| `resource` | `action.reads[].uri` |
 | `policy_decision` | `decision` |
 | `prev_hash` | `previous_event_hash` |
 | `policy_bundle` | `policy_ref` |
 | `audit_bundle` | `evidence_ref` |
-| `capability_hint` | `capability_id` |
+| `capability_hint` | `action.capability.id` (required when effect is ambiguous) |
+| `runtime_ref` | `runtime_ref` |
+| `timestamp` | `timestamp` |
+| `reason` | `reason` |
 
-Compiled events use `pf-core.event.v1` with `event_kind.type = "action"` for observation compile path.
+Sidecar principal roles are resolved from `adapters/provability-fabric/fixtures/capability_catalog.json` (`principal_roles_by_capability`), not hardcoded in the normalizer.
+
+Compiled action observations use `pf-core.event.v1` with `event_kind.type = "action"`.
 
 ## Live path: provability-fabric sidecar
 
@@ -90,9 +112,9 @@ Untrusted adapter: `adapters/provability-fabric/mcp_sidecar/normalize.py`
 2. Adapter normalizes to `pf-core.runtime_observation.v1`.
 3. Trusted compile path: `pf core compile-observation` → `pf core check-trace`.
 
-Golden test: `adapters/provability-fabric/tests/test_normalize.py` (not in blocking `pf-core-trusted`).
+Golden tests: `adapters/provability-fabric/tests/test_normalize.py` (not in blocking `pf-core-trusted`).
 
-v0 flat observations remain supported; use `pf-core/scripts/migrate-v0-to-v1.py` for mechanical uplift.
+v0 flat observations remain supported for migration reference; use `pf-core/scripts/migrate-v0-to-v1.py` for mechanical uplift.
 
 ## Pre-execution behavior
 
@@ -112,6 +134,8 @@ After a tool call, the adapter must:
 2. Validate executable postconditions where defined in the contract.
 3. Attach `evidence_ref` and update hash chain (`event_hash`, `trace_hash`).
 4. Append an audit line to `audit.jsonl` (append-only; no in-place edits).
+
+Handoff audit lines use `delegated_capabilities[].id` (comma-joined when multiple) for the `capability` field, not a legacy single `capability` object.
 
 ## Prohibited adapter behavior
 

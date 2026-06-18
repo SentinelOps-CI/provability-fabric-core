@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
 from pf_core.errors import PFCoreError
+
+V0_OBSERVATION = "pf-core.runtime_observation.v0"
 
 FORBIDDEN_PHRASES = [
     "fully secure",
@@ -135,8 +138,32 @@ def _check_documented_in_boundary(root: Path, rel_path: str) -> None:
         )
 
 
+def audit_v1_primary_fixtures(root: Path) -> None:
+    """Fail if trusted valid fixtures use v0 observations without legacy tagging."""
+    examples = root / "pf-core" / "examples"
+    if not examples.exists():
+        return
+    for path in sorted(examples.rglob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if data.get("schema_version") != V0_OBSERVATION:
+            continue
+        rel = path.relative_to(examples).as_posix()
+        if rel.startswith("valid/"):
+            raise PFCoreError(
+                "LegacyFixtureInTrustedPath",
+                f"{rel} uses {V0_OBSERVATION}; valid fixtures must be v1-primary",
+            )
+        if not data.get("legacy"):
+            raise PFCoreError(
+                "LegacyFixtureUntagged",
+                f"{rel} uses {V0_OBSERVATION} without \"legacy\": true",
+            )
+
+
 def audit_boundary(root: Path) -> None:
     lean_theorems_missing_docs: list[str] = []
+
+    audit_v1_primary_fixtures(root)
 
     for doc in REQUIRED_DOCS:
         if not (root / doc).exists():

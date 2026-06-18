@@ -163,7 +163,58 @@ def write(path: Path, obj: dict) -> None:
 
 
 def write_invalid(path: Path, obj: dict, expected_error: str, must_fail_at: str) -> None:
-    write(path, {**obj, "expected_error": expected_error, "must_fail_at": must_fail_at})
+    payload = {**obj, "expected_error": expected_error, "must_fail_at": must_fail_at}
+    if obj.get("schema_version") == "pf-core.runtime_observation.v0":
+        payload["legacy"] = True
+    write(path, payload)
+
+
+def observation_v1(
+    observation_id: str,
+    principal_id: str,
+    tenant_id: str,
+    capability: dict,
+    uri: str,
+    kind: str,
+    decision: str,
+    *,
+    roles: list[str] | None = None,
+    policy_ref: str = "policy/default.v0",
+    evidence_ref: str = "",
+    capability_id: str | None = None,
+) -> dict:
+    cap_id = capability_id or capability["id"]
+    principal = {
+        "schema_version": "pf-core.principal.v1",
+        "id": principal_id,
+        "tenant_id": tenant_id,
+        "roles": roles or ["agent"],
+        "capabilities": [cap_id],
+    }
+    action = {
+        "schema_version": "pf-core.action.v1",
+        "id": f"act-{observation_id}",
+        "principal": principal,
+        "capability": capability,
+        "effects": [effect(kind)],
+        "reads": [resource(uri, tenant_id)],
+        "writes": [],
+    }
+    return {
+        "schema_version": "pf-core.runtime_observation.v1",
+        "trace_id": f"trace-{observation_id}",
+        "event_id": observation_id,
+        "observation_id": observation_id,
+        "principal": principal,
+        "action": action,
+        "decision": decision,
+        "policy_ref": policy_ref,
+        "evidence_ref": evidence_ref,
+        "runtime_ref": "pf-core/fixtures",
+        "timestamp": "2026-06-18T00:00:00Z",
+        "previous_event_hash": GENESIS,
+        "hash": "0" * 64,
+    }
 
 
 def main() -> None:
@@ -171,6 +222,19 @@ def main() -> None:
     file_read_ev = make_event("ev-file-read-1", file_read_act, "allowed", GENESIS)
     write(OUT / "valid/file_read_allowed.json", file_read_ev)
     write(OUT / "valid/file_read_allowed_trace.json", make_trace([file_read_ev]))
+
+    file_read_obs = observation_v1(
+        "obs-file-read-1",
+        "agent-1",
+        "tenant-a",
+        CAP_FILE_READ,
+        "/data/report.txt",
+        "file.read",
+        "allowed",
+        roles=["agent"],
+        capability_id="cap:file-read",
+    )
+    write(OUT / "valid/file_read_observation.json", file_read_obs)
 
     file_read_bad = action(AGENT, CAP_FILE_READ, "/data/report.txt", "file.read", "tenant-b")
     file_read_denied_ev = make_event("ev-file-read-denied", file_read_bad, "denied", GENESIS)
@@ -274,19 +338,18 @@ def main() -> None:
     }
     write(OUT / "valid/lab_release_contract.json", lab_contract)
 
-    lab_obs = {
-        "schema_version": "pf-core.runtime_observation.v0",
-        "observation_id": "obs-lab-release",
-        "principal_id": "agent-1",
-        "tenant_id": "tenant-a",
-        "effect_kind": "lab.release",
-        "resource_uri": "lab:experiment-42",
-        "decision": "allowed",
-        "previous_event_hash": GENESIS,
-        "capability_id": "cap:lab-release",
-        "policy_ref": "policy/lab-gate.v0",
-        "evidence_ref": "evidence/lab-signoff.v0",
-    }
+    lab_obs = observation_v1(
+        "obs-lab-release",
+        "agent-1",
+        "tenant-a",
+        CAP_LAB,
+        "lab:experiment-42",
+        "lab.release",
+        "allowed",
+        roles=["lab_operator"],
+        policy_ref="policy/lab-gate.v0",
+        evidence_ref="evidence/lab-signoff.v0",
+    )
     write(OUT / "valid/lab_release_observation.json", lab_obs)
 
     write_invalid(
@@ -326,27 +389,35 @@ def main() -> None:
     mcp_denied_ev = make_event("ev-mcp-denied", mcp_denied_act, "denied", GENESIS)
     write(OUT / "valid/mcp_sidecar_denied.json", mcp_denied_ev)
 
-    mcp_obs = {
-        "schema_version": "pf-core.runtime_observation.v0",
-        "observation_id": "obs-mcp-1",
-        "principal_id": "agent-1",
-        "tenant_id": "tenant-a",
-        "effect_kind": "mcp.invoke",
-        "resource_uri": "mcp:filesystem/read",
-        "decision": "allowed",
-        "previous_event_hash": GENESIS,
-        "capability_id": "cap:mcp-invoke",
-        "policy_ref": "policy/default.v0",
-        "evidence_ref": "evidence/mcp-audit.v0",
-    }
+    mcp_obs = observation_v1(
+        "obs-mcp-1",
+        "agent-1",
+        "tenant-a",
+        CAP_MCP,
+        "mcp:filesystem/read",
+        "mcp.invoke",
+        "allowed",
+        roles=["mcp_user"],
+        policy_ref="policy/default.v0",
+        evidence_ref="evidence/mcp-audit.v0",
+        capability_id="cap:mcp-invoke",
+    )
     write(OUT / "valid/mcp_sidecar_observation.json", mcp_obs)
 
-    mcp_ambiguous = dict(mcp_obs)
-    mcp_ambiguous["observation_id"] = "obs-mcp-ambiguous"
-    mcp_ambiguous.pop("capability_id")
     write_invalid(
         OUT / "invalid/mcp_sidecar_ambiguous.json",
-        mcp_ambiguous,
+        {
+            "schema_version": "pf-core.runtime_observation.v0",
+            "observation_id": "obs-mcp-ambiguous",
+            "principal_id": "agent-1",
+            "tenant_id": "tenant-a",
+            "effect_kind": "mcp.invoke",
+            "resource_uri": "mcp:filesystem/read",
+            "decision": "allowed",
+            "previous_event_hash": GENESIS,
+            "policy_ref": "policy/default.v0",
+            "evidence_ref": "evidence/mcp-audit.v0",
+        },
         "AmbiguousMapping",
         "runtime_to_trace",
     )

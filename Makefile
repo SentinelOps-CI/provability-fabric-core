@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-trusted
+.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-trusted pf-core-e2e
 
 PF_CORE_DIR := pf-core
 LEAN_DIR := $(PF_CORE_DIR)/lean
@@ -27,3 +27,6 @@ pf-core-audit: pf-core-install
 
 pf-core-trusted: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit
 	@echo "pf-core-trusted: all checks passed"
+
+pf-core-e2e: pf-core-install pf-core-lean
+	PYTHONPATH=$(VALIDATOR_DIR) bash $(PF_CORE_DIR)/scripts/e2e-replay-gate.sh

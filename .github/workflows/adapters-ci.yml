@@ -14,15 +14,28 @@ on:
 jobs:
   adapters:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: ${{ github.ref != 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Clone sibling repos at pinned SHAs
         run: |
-          git clone --depth 1 https://github.com/SentinelOps-CI/provability-fabric /tmp/provability-fabric
-          git clone --depth 1 --branch v0.1.0 https://github.com/SentinelOps-CI/pcs-core /tmp/pcs-core
-          git clone --depth 1 https://github.com/SentinelOps-CI/post-incident-proofs /tmp/post-incident-proofs
+          set -euo pipefail
+          PF_SHA=a567c8dca015fac3890fddbb77dfd254caa720d8
+          PCS_SHA=280bbea4bf3bf3e45004b6254bc72b603030f179
+          PIP_SHA=d5f3051b927f2f68cabac1a37c85d5113b9d77ad
+
+          git clone https://github.com/SentinelOps-CI/provability-fabric /tmp/provability-fabric
+          git -C /tmp/provability-fabric checkout "$PF_SHA"
+          test "$(git -C /tmp/provability-fabric rev-parse HEAD)" = "$PF_SHA"
+
+          git clone https://github.com/SentinelOps-CI/pcs-core /tmp/pcs-core
+          git -C /tmp/pcs-core checkout "$PCS_SHA"
+          test "$(git -C /tmp/pcs-core rev-parse HEAD)" = "$PCS_SHA"
+
+          git clone https://github.com/SentinelOps-CI/post-incident-proofs /tmp/post-incident-proofs
+          git -C /tmp/post-incident-proofs checkout "$PIP_SHA"
+          test "$(git -C /tmp/post-incident-proofs rev-parse HEAD)" = "$PIP_SHA"
 
       - uses: actions/setup-python@v5
         with:
@@ -36,6 +49,9 @@ jobs:
       - name: Export capability catalog
         run: python adapters/provability-fabric/export_catalog.py
 
+      - name: Catalog drift check (Lean authority vs JSON export)
+        run: pytest -q adapters/provability-fabric/tests/test_policy_correspondence.py::test_catalog_export_matches_lean
+
       - name: pytest provability-fabric adapter
         run: pytest -q adapters/provability-fabric/tests/
 
@@ -44,3 +60,6 @@ jobs:
 
       - name: Generate pcs replay trace fixture
         run: python adapters/pcs/normalize_release.py
+
+      - name: PIP smoke (emit-artifacts bundle)
+        run: bash adapters/post_incident_proofs/smoke_test.sh

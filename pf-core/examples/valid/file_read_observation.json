@@ -1,49 +1,49 @@
 {
   "schema_version": "pf-core.runtime_observation.v1",
-  "trace_id": "trace-obs-mcp-1",
-  "event_id": "obs-mcp-1",
-  "observation_id": "obs-mcp-1",
+  "trace_id": "trace-obs-file-read-1",
+  "event_id": "obs-file-read-1",
+  "observation_id": "obs-file-read-1",
   "principal": {
     "schema_version": "pf-core.principal.v1",
     "id": "agent-1",
     "tenant_id": "tenant-a",
     "roles": [
-      "mcp_user"
+      "agent"
     ],
     "capabilities": [
-      "cap:mcp-invoke"
+      "cap:file-read"
     ]
   },
   "action": {
     "schema_version": "pf-core.action.v1",
-    "id": "act-obs-mcp-1",
+    "id": "act-obs-file-read-1",
     "principal": {
       "schema_version": "pf-core.principal.v1",
       "id": "agent-1",
       "tenant_id": "tenant-a",
       "roles": [
-        "mcp_user"
+        "agent"
       ],
       "capabilities": [
-        "cap:mcp-invoke"
+        "cap:file-read"
       ]
     },
     "capability": {
       "schema_version": "pf-core.capability.v0",
-      "id": "cap:mcp-invoke",
-      "effect_kind": "mcp.invoke",
-      "resource_pattern": "mcp:*"
+      "id": "cap:file-read",
+      "effect_kind": "file.read",
+      "resource_pattern": "/data/*"
     },
     "effects": [
       {
         "schema_version": "pf-core.effect.v0",
-        "kind": "mcp.invoke"
+        "kind": "file.read"
       }
     ],
     "reads": [
       {
         "schema_version": "pf-core.resource.v0",
-        "uri": "mcp:filesystem/read",
+        "uri": "/data/report.txt",
         "tenant_id": "tenant-a"
       }
     ],
@@ -51,7 +51,7 @@
   },
   "decision": "allowed",
   "policy_ref": "policy/default.v0",
-  "evidence_ref": "evidence/mcp-audit.v0",
+  "evidence_ref": "",
   "runtime_ref": "pf-core/fixtures",
   "timestamp": "2026-06-18T00:00:00Z",
   "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",

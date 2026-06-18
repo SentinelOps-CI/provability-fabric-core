@@ -1,13 +1,59 @@
 {
-  "schema_version": "pf-core.runtime_observation.v0",
+  "schema_version": "pf-core.runtime_observation.v1",
+  "trace_id": "trace-obs-lab-release",
+  "event_id": "obs-lab-release",
   "observation_id": "obs-lab-release",
-  "principal_id": "agent-1",
-  "tenant_id": "tenant-a",
-  "effect_kind": "lab.release",
-  "resource_uri": "lab:experiment-42",
+  "principal": {
+    "schema_version": "pf-core.principal.v1",
+    "id": "agent-1",
+    "tenant_id": "tenant-a",
+    "roles": [
+      "lab_operator"
+    ],
+    "capabilities": [
+      "cap:lab-release"
+    ]
+  },
+  "action": {
+    "schema_version": "pf-core.action.v1",
+    "id": "act-obs-lab-release",
+    "principal": {
+      "schema_version": "pf-core.principal.v1",
+      "id": "agent-1",
+      "tenant_id": "tenant-a",
+      "roles": [
+        "lab_operator"
+      ],
+      "capabilities": [
+        "cap:lab-release"
+      ]
+    },
+    "capability": {
+      "schema_version": "pf-core.capability.v0",
+      "id": "cap:lab-release",
+      "effect_kind": "lab.release",
+      "resource_pattern": "lab:*"
+    },
+    "effects": [
+      {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "lab.release"
+      }
+    ],
+    "reads": [
+      {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "lab:experiment-42",
+        "tenant_id": "tenant-a"
+      }
+    ],
+    "writes": []
+  },
   "decision": "allowed",
-  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-  "capability_id": "cap:lab-release",
   "policy_ref": "policy/lab-gate.v0",
-  "evidence_ref": "evidence/lab-signoff.v0"
+  "evidence_ref": "evidence/lab-signoff.v0",
+  "runtime_ref": "pf-core/fixtures",
+  "timestamp": "2026-06-18T00:00:00Z",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "0000000000000000000000000000000000000000000000000000000000000000"
 }

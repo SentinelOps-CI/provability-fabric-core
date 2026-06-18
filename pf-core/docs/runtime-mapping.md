@@ -27,6 +27,16 @@ flowchart LR
 | Observation contract pre | `contract` + `observation` | policy/evidence refs | `contracts.py` at emit time |
 | Certificate emit | `trace` + `contract` | `certificate` | `emitter.py` |
 
+## T1 replay vs T4 decider split
+
+| Ring | Component | What it proves |
+|------|-----------|----------------|
+| **T1 (Lean)** | `Replay.lean`, `Soundness.lean` | Decider soundness on golden traces; optional `--lean-check` in e2e |
+| **T4 (runtime)** | `deciders.py`, `contracts.py` | Executable safety on every trace in CI |
+| **T5 (organizational)** | Adapter catalog JSON, policy refs | Catalog completeness; not in Lean TCB |
+
+Lean replay runs only on **release goldens** (`file_read_allowed_trace.json`, `handoff_trace.json`, `pcs_replay_trace.json`) for performance. All traces still pass Python deciders in `check-trace`.
+
 ## Field mapping (observation to event)
 
 | Observation field | Event / action field |

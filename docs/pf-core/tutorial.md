@@ -29,6 +29,44 @@ pf core emit-artifacts --file pf-core/examples/valid/mcp_sidecar_observation.jso
 
 Windows: `powershell -File pf-core/scripts/pf-core-trusted.ps1`
 
+## End-to-end replay (Phase 6)
+
+Full pipeline gate (sidecar → normalize → compile → check-trace → certificate):
+
+```bash
+make pf-core-e2e
+# or
+bash pf-core/scripts/e2e-replay-gate.sh
+powershell -File pf-core/scripts/e2e-replay-gate.ps1
+```
+
+Scenarios exercised:
+
+| Scenario | Expected |
+|----------|----------|
+| File read allow (v1 observation) | PASS through certificate |
+| MCP sidecar normalize | PASS through certificate |
+| Compile downgrades unsafe allow | `decision: denied` |
+| Handoff subset violation | FAIL at `check-trace` |
+| PCS replay trace | PASS at `check-trace` |
+| Tampered hash chain | FAIL at replay validation |
+| Lean replay (3 goldens) | PASS with `--lean-check` |
+| Handoff validate + audit.jsonl | PASS (`validate-handoff`, handoff trace audit line) |
+
+Single observation walkthrough:
+
+```bash
+pf core compile-observation --schemas pf-core/schemas \
+  --file pf-core/examples/valid/mcp_sidecar_observation.json --output /tmp/event.json
+pf core validate-event --schemas pf-core/schemas --file /tmp/event.json
+pf core check-trace --schemas pf-core/schemas \
+  --file pf-core/examples/valid/file_read_allowed_trace.json --lean-check
+pf core validate-handoff --schemas pf-core/schemas \
+  --file pf-core/examples/valid/handoff.json
+pf core emit-certificate --schemas pf-core/schemas \
+  --trace pf-core/examples/valid/file_read_allowed_trace.json --output /tmp/cert.json
+```
+
 ## Event kinds (v1)
 
 | Kind | Meaning | Safety check |

@@ -1,0 +1,239 @@
+[
+  {
+    "id": "file_read_allow_file_user",
+    "parent_tool": "FileRead",
+    "parent_roles": ["file_user"],
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/report.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "file_read_allow_file_reader_role",
+    "parent_tool": "FileRead",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/report.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "file_read_deny_no_role",
+    "parent_tool": "FileRead",
+    "parent_roles": ["logger"],
+    "pf_core_role": "logger",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/report.txt",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "file_read_deny_wrong_tenant",
+    "parent_tool": "FileRead",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_tenant": "tenant-b",
+    "resource_uri": "/data/report.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "file_read_allow_admin",
+    "parent_tool": "FileRead",
+    "parent_roles": ["admin"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/report.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "network_allow_network_user",
+    "parent_tool": "NetworkCall",
+    "parent_roles": ["network_user"],
+    "tenant_id": "tenant-a",
+    "resource_uri": "https://example.com",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "network_deny_file_reader",
+    "parent_tool": "NetworkCall",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "https://example.com",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "network_allow_admin",
+    "parent_tool": "NetworkCall",
+    "parent_roles": ["admin"],
+    "pf_core_role": "network_user",
+    "tenant_id": "tenant-a",
+    "resource_uri": "https://example.com",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "email_allow_email_user",
+    "parent_tool": "SendEmail",
+    "parent_roles": ["email_user"],
+    "tenant_id": "tenant-a",
+    "resource_uri": "mailto:user@example.com",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "email_deny_no_cap",
+    "parent_tool": "SendEmail",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "mailto:user@example.com",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "email_allow_admin",
+    "parent_tool": "SendEmail",
+    "parent_roles": ["admin"],
+    "pf_core_role": "email_user",
+    "tenant_id": "tenant-a",
+    "resource_uri": "mailto:user@example.com",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "file_write_allow_file_writer",
+    "parent_tool": "FileWrite",
+    "parent_roles": ["file_writer"],
+    "pf_core_role": "file_admin",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/out.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "file_write_deny_read_only",
+    "parent_tool": "FileWrite",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/data/out.txt",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "mcp_allow_mcp_user",
+    "parent_tool": "Custom",
+    "parent_roles": ["admin"],
+    "pf_core_role": "mcp_user",
+    "tenant_id": "tenant-a",
+    "resource_uri": "mcp:tool/run",
+    "pf_core_effect": "mcp.invoke",
+    "pf_core_capability": "cap:mcp-invoke",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "mcp_deny_no_role",
+    "parent_tool": "Custom",
+    "parent_roles": ["logger"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_uri": "mcp:tool/run",
+    "pf_core_effect": "mcp.invoke",
+    "pf_core_capability": "cap:mcp-invoke",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "lab_release_allow_operator",
+    "parent_tool": "Custom",
+    "parent_roles": ["admin"],
+    "pf_core_role": "lab_operator",
+    "tenant_id": "tenant-lab",
+    "resource_uri": "lab:experiment-42",
+    "pf_core_effect": "lab.release",
+    "pf_core_capability": "cap:lab-release",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": true
+  },
+  {
+    "id": "lab_release_deny_agent",
+    "parent_tool": "Custom",
+    "parent_roles": ["logger"],
+    "pf_core_role": "agent",
+    "tenant_id": "tenant-lab",
+    "resource_uri": "lab:experiment-42",
+    "pf_core_effect": "lab.release",
+    "pf_core_capability": "cap:lab-release",
+    "expected_parent_permit": false,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "handoff_subset_allow",
+    "vector_kind": "handoff",
+    "from_roles": ["agent"],
+    "to_roles": ["handoff_delegate"],
+    "tenant_id": "tenant-a",
+    "delegated_capability": "cap:handoff",
+    "expected_pf_core_handoff_safe": true
+  },
+  {
+    "id": "handoff_subset_deny_expansion",
+    "vector_kind": "handoff",
+    "from_roles": ["agent"],
+    "to_roles": ["handoff_delegate"],
+    "tenant_id": "tenant-a",
+    "delegated_capability": "cap:network",
+    "expected_pf_core_handoff_safe": false
+  },
+  {
+    "id": "handoff_cross_tenant_deny",
+    "vector_kind": "handoff",
+    "from_roles": ["agent"],
+    "to_roles": ["handoff_delegate"],
+    "tenant_id": "tenant-a",
+    "to_tenant": "tenant-b",
+    "delegated_capability": "cap:handoff",
+    "expected_pf_core_handoff_safe": false
+  },
+  {
+    "id": "tenant_deny_file_read",
+    "parent_tool": "FileRead",
+    "parent_roles": ["file_user"],
+    "pf_core_role": "file_reader",
+    "tenant_id": "tenant-a",
+    "resource_tenant": "tenant-x",
+    "resource_uri": "/data/secret.txt",
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "log_spend_allow_finance",
+    "parent_tool": "LogSpend",
+    "parent_roles": ["finance_user"],
+    "pf_core_role": "finance_user",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/ledger/entry",
+    "documented_gap": true,
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": false
+  },
+  {
+    "id": "log_action_allow_logger",
+    "parent_tool": "LogAction",
+    "parent_roles": ["logger"],
+    "pf_core_role": "logger",
+    "tenant_id": "tenant-a",
+    "resource_uri": "/audit/log",
+    "documented_gap": true,
+    "expected_parent_permit": true,
+    "expected_pf_core_allowed": false
+  }
+]

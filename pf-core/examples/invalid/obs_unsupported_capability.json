@@ -9,5 +9,6 @@
   "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "capability_id": "cap:unknown",
   "expected_error": "UnsupportedCapability",
-  "must_fail_at": "runtime_to_trace"
+  "must_fail_at": "runtime_to_trace",
+  "legacy": true
 }

@@ -116,6 +116,16 @@ inductive EventKind where
 
 Hash canonicalization is unchanged: `event_hash = sha256(canonical_json(event \\ {event_hash}))`. Fixtures and trace schema now use v1 events. v0 schema file remains for reference only.
 
+### Migration from v0 runtime observations
+
+| v0 (`pf-core.runtime_observation.v0`) | v1 (`pf-core.runtime_observation.v1`) |
+|---------------------------------------|---------------------------------------|
+| Flat `principal_id`, `tenant_id`, `effect_kind`, `resource_uri` | Nested `principal`, `action` (v1), full hash fields |
+| `capability_id` optional | Capability embedded in `action`; explicit `capabilities[]` on principal |
+| Compile path (deprecated) | **Normative** trusted golden path |
+
+Use `pf-core/scripts/migrate-v0-to-v1.py` for mechanical uplift. Valid fixtures in `examples/valid/` must use v1 only (`audit.py` gate).
+
 
 
 ## Relation to JSON
