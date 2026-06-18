@@ -1,0 +1,13 @@
+{
+  "schema_version": "pf-core.runtime_observation.v0",
+  "observation_id": "obs-lab-bad",
+  "principal_id": "agent-1",
+  "tenant_id": "tenant-a",
+  "effect_kind": "lab.release",
+  "resource_uri": "lab:experiment-42",
+  "decision": "allowed",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "policy_ref": "policy/unknown.v0",
+  "expected_error": "PolicyRefNotFound",
+  "must_fail_at": "runtime_to_trace"
+}
