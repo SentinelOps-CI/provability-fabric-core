@@ -33,10 +33,19 @@ AGENT_NO_EMAIL = {
 }
 
 RECIPIENT = {
-    "schema_version": "pf-core.principal.v0",
+    "schema_version": "pf-core.principal.v1",
     "id": "agent-2",
     "tenant_id": "tenant-a",
-    "roles": ["cap:handoff"],
+    "roles": ["handoff_delegate"],
+    "capabilities": [],
+}
+
+AGENT_V1 = {
+    "schema_version": "pf-core.principal.v1",
+    "id": "agent-1",
+    "tenant_id": "tenant-a",
+    "roles": ["agent"],
+    "capabilities": [],
 }
 
 CAP_FILE_READ = {
@@ -200,10 +209,12 @@ def main() -> None:
     )
 
     handoff_doc = {
-        "schema_version": "pf-core.handoff.v0",
-        "from_principal": AGENT,
+        "schema_version": "pf-core.handoff.v1",
+        "from_principal": AGENT_V1,
         "to_principal": RECIPIENT,
-        "capability": CAP_HANDOFF,
+        "delegated_capabilities": [CAP_HANDOFF],
+        "reason": "delegate handoff authority to agent-2",
+        "evidence_ref": "evidence/handoff.v0",
     }
     write(OUT / "valid/handoff.json", handoff_doc)
 
@@ -219,8 +230,7 @@ def main() -> None:
 
     handoff_expand = {
         **handoff_doc,
-        "capability": CAP_NETWORK,
-        "to_principal": {**RECIPIENT, "roles": ["cap:network", "cap:handoff"]},
+        "delegated_capabilities": [CAP_NETWORK],
     }
     write_invalid(
         OUT / "invalid/handoff_authority_expansion.json",
