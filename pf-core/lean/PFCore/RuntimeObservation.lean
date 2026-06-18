@@ -33,8 +33,8 @@ def observationMatchesEvent (obs : RuntimeObservation) (ev : Event) : Prop :=
   ∃ a, ev.kind = EventKind.action a ∧
     a.principal.id = obs.principalId ∧
     a.principal.tenantId = obs.tenantId ∧
-    effectKindToString a.effect.kind = obs.effectKind ∧
-    a.resource.uri = obs.resourceUri ∧
+    effectKindToString a.primaryEffect.kind = obs.effectKind ∧
+    a.primaryResource.uri = obs.resourceUri ∧
     ev.decision = obs.decision ∧
     ev.prevHash = obs.prevHash
 
