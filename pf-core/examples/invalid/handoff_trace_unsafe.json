@@ -1,0 +1,46 @@
+{
+  "schema_version": "pf-core.trace.v0",
+  "events": [
+    {
+      "schema_version": "pf-core.event.v1",
+      "event_id": "ev-handoff-bad",
+      "event_kind": {
+        "type": "handoff",
+        "handoff": {
+          "schema_version": "pf-core.handoff.v0",
+          "from_principal": {
+            "schema_version": "pf-core.principal.v0",
+            "id": "agent-1",
+            "tenant_id": "tenant-a",
+            "roles": [
+              "cap:file-read",
+              "cap:email-send",
+              "cap:handoff",
+              "cap:mcp-invoke"
+            ]
+          },
+          "to_principal": {
+            "schema_version": "pf-core.principal.v0",
+            "id": "agent-2",
+            "tenant_id": "tenant-b",
+            "roles": [
+              "cap:handoff"
+            ]
+          },
+          "capability": {
+            "schema_version": "pf-core.capability.v0",
+            "id": "cap:handoff",
+            "effect_kind": "handoff.delegate",
+            "resource_pattern": "agent:*"
+          }
+        }
+      },
+      "decision": "allowed",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "3c0b84ac8d4b053a1745235cede4b23f1b3151d5bb6a122f492e2ab51fb3b53d"
+    }
+  ],
+  "trace_hash": "dcc0b6c96d6cd863c22f639c128fd57ec14212e8f16fe448d85a4110d6fa424a",
+  "expected_error": "UnsafeTrace",
+  "must_fail_at": "decider_check"
+}
