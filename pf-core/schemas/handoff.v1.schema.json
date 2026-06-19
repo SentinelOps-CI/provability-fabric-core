@@ -24,5 +24,58 @@
     },
     "reason": { "type": "string" },
     "evidence_ref": { "type": "string" }
-  }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.handoff.v1",
+      "from_principal": {
+        "schema_version": "pf-core.principal.v1",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": ["agent"],
+        "capabilities": []
+      },
+      "to_principal": {
+        "schema_version": "pf-core.principal.v1",
+        "id": "agent-2",
+        "tenant_id": "tenant-a",
+        "roles": ["handoff_delegate"],
+        "capabilities": []
+      },
+      "delegated_capabilities": [
+        {
+          "schema_version": "pf-core.capability.v0",
+          "id": "cap:handoff",
+          "effect_kind": "handoff.delegate",
+          "resource_pattern": "agent:*"
+        }
+      ],
+      "reason": "delegate handoff authority",
+      "evidence_ref": "evidence/handoff.v0"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing delegated_capabilities",
+      "value": {
+        "schema_version": "pf-core.handoff.v1",
+        "from_principal": {
+          "schema_version": "pf-core.principal.v1",
+          "id": "agent-1",
+          "tenant_id": "tenant-a",
+          "roles": ["agent"],
+          "capabilities": []
+        },
+        "to_principal": {
+          "schema_version": "pf-core.principal.v1",
+          "id": "agent-2",
+          "tenant_id": "tenant-a",
+          "roles": ["handoff_delegate"],
+          "capabilities": []
+        },
+        "reason": "missing caps",
+        "evidence_ref": "evidence/handoff.v0"
+      }
+    }
+  ]
 }
