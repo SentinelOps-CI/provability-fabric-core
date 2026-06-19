@@ -115,11 +115,12 @@ Run locally before opening PIP PR:
 
 ```bash
 bash adapters/post_incident_proofs/smoke_test.sh
+# Or: bash scripts/phase7-cross-repo-smoke.sh (full in-repo harness)
 ```
 
-Expected output: `OK: PF-Core artifact bundle at ...` plus documented `verify_bundle` invocation.
+Expected output: `OK: PF-Core artifact bundle at ...` plus `verify_bundle` invocation or SKIP until PIP PR-1 lands.
 
-When PIP is cloned at `/tmp/post-incident-proofs/src`, smoke test documents the invocation; wire `verify_bundle` in PIP PR-1 to make smoke test call it.
+When PIP is cloned at extraction-log pin paths (`/tmp/post-incident-proofs`, sibling `../post-incident-proofs`), smoke test probes `verify_bundle` and runs it when PF-Core layout support is detected in `VerifyBundle.lean`.
 
 ---
 
