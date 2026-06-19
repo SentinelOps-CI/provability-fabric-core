@@ -164,9 +164,12 @@ def emit_audit_for_trace(
     reason: str = "adapter_compile",
 ) -> Path:
     """Write audit.jsonl lines for each event in an existing trace."""
+    events = trace.get("events")
+    if not isinstance(events, list) or not events:
+        raise PFCoreError("EmptyTrace", "trace has no events for audit emission")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as fh:
-        for event in trace.get("events", []):
+        for event in events:
             audit_line = format_audit_line(
                 trace_id=trace_id,
                 event=event,
