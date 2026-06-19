@@ -1,0 +1,15 @@
+{
+  "schema_version": "pf-core.certificate.v0",
+  "certificate_id": "cert-overclaim-bad",
+  "trace_hash": "0000000000000000000000000000000000000000000000000000000000000001",
+  "contract_hash": "0000000000000000000000000000000000000000000000000000000000000002",
+  "proof_ref": "pf-core/lean/PFCore/Soundness.lean",
+  "checker": "lean4",
+  "checker_version": "4.14.0",
+  "claim_class": "this agent is safe",
+  "assumptions": ["A1", "A2"],
+  "event_count": 1,
+  "safe": true,
+  "expected_error": "ForbiddenCertificateClaim",
+  "must_fail_at": "certificate_overclaim"
+}
