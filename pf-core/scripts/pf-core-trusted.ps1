@@ -7,7 +7,7 @@ $env:PYTHONPATH = Join-Path $Root "pf-core\validator"
 
 # Optional deps; gate uses PYTHONPATH (editable install often fails on Windows).
 try {
-  python -m pip install -q setuptools wheel jsonschema referencing *> $null
+  python -m pip install -q setuptools wheel jsonschema referencing pytest *> $null
   python -m pip install -q -e pf-core/validator *> $null
 } catch {
   Write-Host "Note: pip install skipped; using PYTHONPATH"
@@ -25,6 +25,9 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 python pf-core/scripts/validate_examples.py
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 python -m pf_core.cli core audit-boundary --root .
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+python -m pytest pf-core/validator/tests -q
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "pf-core-trusted: all checks passed"
