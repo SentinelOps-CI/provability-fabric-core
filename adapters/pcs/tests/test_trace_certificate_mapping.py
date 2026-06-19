@@ -78,4 +78,20 @@ def test_normalize_release_reads_trace_certificate():
     """normalize_release.py must load trace_certificate when present (mapping hook)."""
     source = (ROOT / "adapters/pcs/normalize_release.py").read_text(encoding="utf-8")
     assert "trace_certificate.valid.json" in source
-    assert "trace_cert.exists()" in source
+    assert "_read_trace_certificate" in source
+
+
+def test_normalize_maps_certificate_fields():
+    sys.path.insert(0, str(ROOT / "adapters/pcs"))
+    from normalize_release import normalize_labtrust_release  # noqa: E402
+
+    trace = normalize_labtrust_release(LABTRUST)
+    cert = json.loads(PCS_CERT.read_text(encoding="utf-8"))
+
+    assert trace.get("pcs_trace_hash_hint") == normalize_hash(cert["trace_hash"])
+    assert trace.get("pcs_spec_hash_hint") == normalize_hash(cert["spec_hash"])
+    assert trace.get("pcs_policy_ref") == f"policy/{cert['property_id']}.v0"
+    assert len(trace["events"]) == 2
+    release = trace["events"][-1]
+    assert cert["property_id"] in release["reason"]
+    assert normalize_hash(cert["spec_hash"]) in release["reason"]
