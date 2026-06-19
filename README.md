@@ -1,27 +1,35 @@
+<div align="center">
+
 # Provability Fabric Core
 
-Minimal trusted kernel repository for **PF-Core** — proof-carrying agentic actions, contracted tool calls, handoffs, and trace-level safety preservation.
+**Machine-checked safety for AI agent actions — from runtime logs to verifiable certificates.**
 
-PF-Core is intentionally smaller than Provability Fabric: it is not a second runtime, CLI surface, or evidence standard.
+<br/>
 
-## PF-Core documentation
+[![pf-core-trusted](https://github.com/SentinelOps-CI/provability-fabric-core/actions/workflows/pf-core-trusted.yml/badge.svg)](https://github.com/SentinelOps-CI/provability-fabric-core/actions/workflows/pf-core-trusted.yml)
+[![Lean 4](https://img.shields.io/badge/Lean-4-2C3E50?style=flat-square)](https://leanprover.github.io/)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Version](https://img.shields.io/badge/version-0.6.0-6C757D?style=flat-square)](pf-core/VERSION)
 
-- [PF-Core index](docs/pf-core/README.md)
-- [Trusted kernel (Lean)](pf-core/lean/PFCore/)
-- [Mission and boundary](docs/pf-core/mission.md)
-- [Trusted boundary](docs/pf-core/trusted-boundary.md)
-- [Claim boundary](docs/pf-core/claim-boundary.md)
-- [Assumptions (A1–A10)](docs/pf-core/assumptions.md)
-- [Threat model](pf-core/docs/threat-model.md)
-- [Adapter contract](pf-core/docs/adapter-contract.md)
-- [Certificate semantics](pf-core/docs/certificate-semantics.md)
-- [Formal model](pf-core/docs/formal-model.md)
-- [Examples](pf-core/docs/examples.md)
-- [Theorem map](pf-core/docs/theorem-map.md)
-- [Schema map](pf-core/docs/schema-map.md)
-- [Runtime mapping](pf-core/docs/runtime-mapping.md)
-- [Trusted rings](pf-core/docs/trusted-rings.md)
-- [Validator](pf-core/validator/README.md)
+</div>
+
+---
+
+## What is this?
+
+When an AI agent reads a file, sends an email, or hands work to another agent — **was that action allowed?** Can you prove it later, from logs alone?
+
+**Provability Fabric Core** is a small, auditable foundation for answering those questions. It gives you:
+
+| | |
+|---|---|
+| **Structured records** | A common format for agent actions, handoffs between agents, and the traces they form |
+| **Safety checks** | Rules that verify capabilities, tenant boundaries, and allowed effects on every step |
+| **Proofs you can replay** | Lean 4 theorems linked to a Python validator, so certificates mean what they claim |
+
+This repository is the **trusted kernel** — schemas, proofs, and a reference validator. It is not a full agent runtime, policy editor, or deployment platform.
+
+> **In one sentence:** turn runtime observations into ordered traces, check them against formal safety rules, and emit certificates backed by machine-checked proofs.
 
 ## Verify locally
 
