@@ -1,0 +1,59 @@
+{
+  "schema_version": "pf-core.runtime_observation.v1",
+  "trace_id": "trace-obs-email-1",
+  "event_id": "obs-email-1",
+  "observation_id": "obs-email-1",
+  "principal": {
+    "schema_version": "pf-core.principal.v1",
+    "id": "agent-1",
+    "tenant_id": "tenant-a",
+    "roles": [
+      "agent"
+    ],
+    "capabilities": [
+      "cap:email-send"
+    ]
+  },
+  "action": {
+    "schema_version": "pf-core.action.v1",
+    "id": "act-obs-email-1",
+    "principal": {
+      "schema_version": "pf-core.principal.v1",
+      "id": "agent-1",
+      "tenant_id": "tenant-a",
+      "roles": [
+        "agent"
+      ],
+      "capabilities": [
+        "cap:email-send"
+      ]
+    },
+    "capability": {
+      "schema_version": "pf-core.capability.v0",
+      "id": "cap:email-send",
+      "effect_kind": "email.send",
+      "resource_pattern": "mailto:*"
+    },
+    "effects": [
+      {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "email.send"
+      }
+    ],
+    "reads": [
+      {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "mailto:user@example.com",
+        "tenant_id": "tenant-a"
+      }
+    ],
+    "writes": []
+  },
+  "decision": "allowed",
+  "policy_ref": "policy/default.v0",
+  "evidence_ref": "",
+  "runtime_ref": "pf-core/fixtures",
+  "timestamp": "2026-06-18T00:00:00Z",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+}
