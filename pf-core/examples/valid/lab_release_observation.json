@@ -8,7 +8,8 @@
     "id": "agent-1",
     "tenant_id": "tenant-a",
     "roles": [
-      "lab_operator"
+      "lab_operator",
+      "cap:lab-release"
     ],
     "capabilities": [
       "cap:lab-release"
@@ -22,7 +23,8 @@
       "id": "agent-1",
       "tenant_id": "tenant-a",
       "roles": [
-        "lab_operator"
+        "lab_operator",
+        "cap:lab-release"
       ],
       "capabilities": [
         "cap:lab-release"

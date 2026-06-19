@@ -2,7 +2,46 @@
   "events": [
     {
       "decision": "allowed",
-      "event_hash": "cd4881062a64daa31253b0772b86aa7d99705d12f656e5bdfbb5feca5cee6bdf",
+      "event_hash": "bb7d1add60eb77778d796c79018edc04f5da03de983dc00c031b2e66a090e2c7",
+      "event_id": "ev-pcs-qc-gate",
+      "event_kind": {
+        "action": {
+          "capability": {
+            "effect_kind": "file.read",
+            "id": "cap:file-read",
+            "resource_pattern": "lab:*",
+            "schema_version": "pf-core.capability.v0"
+          },
+          "effect": {
+            "kind": "file.read",
+            "schema_version": "pf-core.effect.v0"
+          },
+          "principal": {
+            "id": "lab-operator-1",
+            "roles": [
+              "lab_operator",
+              "cap:file-read"
+            ],
+            "schema_version": "pf-core.principal.v0",
+            "tenant_id": "tenant-lab"
+          },
+          "resource": {
+            "schema_version": "pf-core.resource.v0",
+            "tenant_id": "tenant-lab",
+            "uri": "lab:qc-evidence"
+          },
+          "schema_version": "pf-core.action.v0"
+        },
+        "type": "action"
+      },
+      "evidence_ref": "evidence/lab-signoff.v0",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "reason": "PCS LabTrust release chain replay (QC gate; policy_ref=policy/lab-gate.v0)",
+      "schema_version": "pf-core.event.v1"
+    },
+    {
+      "decision": "allowed",
+      "event_hash": "249c0da2d3bd4f999b9e6447a7c284dd3a478def65d603f0ee77f5f1189c84ed",
       "event_id": "ev-pcs-lab-release",
       "event_kind": {
         "action": {
@@ -34,11 +73,11 @@
         "type": "action"
       },
       "evidence_ref": "evidence/lab-signoff.v0",
-      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "previous_event_hash": "bb7d1add60eb77778d796c79018edc04f5da03de983dc00c031b2e66a090e2c7",
       "reason": "PCS LabTrust release chain replay",
       "schema_version": "pf-core.event.v1"
     }
   ],
   "schema_version": "pf-core.trace.v0",
-  "trace_hash": "4468ce5bead527344311c4133658e1309366ce23a88e230049fde33d0cd2452d"
+  "trace_hash": "7464d5a10e46d19a7efc13ddbc522699f2d64586cd81b8b8a1d776e5a72708a1"
 }
