@@ -31,6 +31,38 @@ This repository is the **trusted kernel** — schemas, proofs, and a reference v
 
 > **In one sentence:** turn runtime observations into ordered traces, check them against formal safety rules, and emit certificates backed by machine-checked proofs.
 
+---
+
+## How it works
+
+```mermaid
+flowchart LR
+  A["Runtime log"] --> B["Adapter"]
+  B --> C["Observation"]
+  C --> D["Trace events"]
+  D --> E["Safety checks"]
+  E --> F["Certificate"]
+
+  style A fill:#f8f9fa,stroke:#dee2e6
+  style B fill:#e7f1ff,stroke:#0d6efd
+  style C fill:#e7f1ff,stroke:#0d6efd
+  style D fill:#fff3cd,stroke:#ffc107
+  style E fill:#d1e7dd,stroke:#198754
+  style F fill:#d1e7dd,stroke:#198754
+```
+
+| Component | Location | What it does |
+|-----------|----------|--------------|
+| **Schemas** | `pf-core/schemas/` | JSON formats for observations, events, traces, and certificates |
+| **Validator** | `pf-core/validator/` | CLI that compiles, validates, checks safety, and emits artifacts |
+| **Lean proofs** | `pf-core/lean/PFCore/` | Machine-checked theorems: runtime checks match the formal model |
+| **Examples** | `pf-core/examples/` | Paired valid and invalid fixtures — every success has a failure twin |
+| **Adapters** | `adapters/` | Optional bridges from real runtime logs into core formats |
+
+Every safety predicate in the formal model has a matching runtime decider, with a soundness proof connecting the two.
+
+---
+
 ## Verify locally
 
 ```bash
