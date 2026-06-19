@@ -148,5 +148,18 @@ assert line['capability'] == 'cap:handoff'
 assert line['principal_id'] == 'agent-1'
 "@
 
+Write-Host "== scenario PASS: email-send"
+Pipeline-From-Observation (Join-Path $Root "pf-core\examples\valid\email_send_observation.json") (Join-Path $Work "email-send")
+
+Write-Host "== scenario PASS: network-denied-obs"
+Pipeline-From-Observation (Join-Path $Root "pf-core\examples\valid\network_denied_observation.json") (Join-Path $Work "network-denied")
+
+Write-Host "== scenario PASS: lab-release-contract"
+Pipeline-From-Observation (Join-Path $Root "pf-core\examples\valid\lab_release_observation.json") (Join-Path $Work "lab-release")
+Invoke-PfCore check-trace `
+  --schemas $Schemas `
+  --file (Join-Path $Work "lab-release\trace.json") `
+  --contract (Join-Path $Root "pf-core\examples\valid\lab_release_contract.json") | Out-Null
+
 Remove-Item -Recurse -Force $Work -ErrorAction SilentlyContinue
 Write-Host "OK: pf-core-e2e all scenarios passed"

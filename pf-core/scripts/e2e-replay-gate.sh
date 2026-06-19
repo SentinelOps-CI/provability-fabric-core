@@ -178,5 +178,26 @@ assert line["capability"] == "cap:handoff"
 assert line["principal_id"] == "agent-1"
 PY
 
+# 9. Email send observation pipeline
+run_pass "email-send" pipeline_from_observation \
+  "$ROOT/pf-core/examples/valid/email_send_observation.json" \
+  "$WORK/email-send" false
+
+# 10. Network denied observation (compile preserves denied)
+run_pass "network-denied-obs" pipeline_from_observation \
+  "$ROOT/pf-core/examples/valid/network_denied_observation.json" \
+  "$WORK/network-denied" false
+
+# 11. Lab release observation + contract check
+run_pass "lab-release-contract" bash -c "
+  bash '$0' __internal_pipeline \
+    '$ROOT/pf-core/examples/valid/lab_release_observation.json' \
+    '$WORK/lab-release' false
+  $PF check-trace \
+    --schemas '$SCHEMAS' \
+    --file '$WORK/lab-release/trace.json' \
+    --contract '$ROOT/pf-core/examples/valid/lab_release_contract.json' >/dev/null
+" "$0"
+
 rm -rf "$WORK"
 echo "OK: pf-core-e2e all scenarios passed"
