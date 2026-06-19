@@ -42,6 +42,10 @@ def _validate_valid(path: Path, registry) -> None:
             raise PFCoreError("UnsafeHandoff", f"valid fixture unsafe: {path.name}")
     elif kind == "contract":
         pass
+    elif kind == "claim_classification":
+        pass
+    elif kind == "certificate":
+        pass
     elif kind == "runtime_observation":
         event = compile_observation(data)
         validate_object(event, registry)
@@ -75,6 +79,31 @@ def _validate_invalid(path: Path, registry) -> None:
         raise PFCoreError("FixtureError", f"invalid fixture missing must_fail_at: {path.name}")
 
     try:
+        if must_fail_at == "compile_downgrade":
+            event = compile_observation(data)
+            if data.get("decision") == "allowed" and event.get("decision") == "denied":
+                if expected != "DecisionDowngraded":
+                    raise PFCoreError(
+                        "FixtureError",
+                        f"{path.name}: expected {expected}, got DecisionDowngraded",
+                    )
+                return
+            raise PFCoreError("FixtureError", f"expected compile downgrade but passed: {path.name}")
+
+        if must_fail_at == "certificate_overclaim":
+            from pf_core.emitter import _reject_forbidden_certificate_text
+
+            try:
+                _reject_forbidden_certificate_text(data)
+                raise PFCoreError("FixtureError", f"expected failure but passed: {path.name}")
+            except PFCoreError as exc:
+                if exc.code != expected:
+                    raise PFCoreError(
+                        "FixtureError",
+                        f"{path.name}: expected {expected}, got {exc.code}",
+                    ) from exc
+            return
+
         if must_fail_at == "runtime_to_trace":
             compile_observation(data)
             raise PFCoreError("FixtureError", f"expected failure but passed: {path.name}")

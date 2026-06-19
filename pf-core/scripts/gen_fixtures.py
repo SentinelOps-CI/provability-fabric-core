@@ -346,7 +346,7 @@ def main() -> None:
         "lab:experiment-42",
         "lab.release",
         "allowed",
-        roles=["lab_operator"],
+        roles=["lab_operator", "cap:lab-release"],
         policy_ref="policy/lab-gate.v0",
         evidence_ref="evidence/lab-signoff.v0",
     )
