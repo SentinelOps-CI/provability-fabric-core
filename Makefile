@@ -1,6 +1,6 @@
 ﻿PYTHON ?= python
 
-.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-unit-tests pf-core-trusted pf-core-e2e
+.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-unit-tests pf-core-trusted pf-core-e2e pf-core-phase7-smoke
 
 PF_CORE_DIR := pf-core
 LEAN_DIR := $(PF_CORE_DIR)/lean
@@ -31,6 +31,9 @@ pf-core-unit-tests: pf-core-install
 
 pf-core-trusted: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-unit-tests
 	@echo "pf-core-trusted: all checks passed"
+
+pf-core-phase7-smoke: pf-core-install pf-core-lean
+	PYTHONPATH=$(VALIDATOR_DIR) bash scripts/phase7-cross-repo-smoke.sh
 
 pf-core-e2e: pf-core-install pf-core-lean
 	PYTHONPATH=$(VALIDATOR_DIR) bash $(PF_CORE_DIR)/scripts/e2e-replay-gate.sh
