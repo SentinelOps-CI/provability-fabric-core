@@ -132,7 +132,34 @@ See `docs/pf-core/extraction-log.md` for file-by-file classification.
 
 ## Phase 7 handoff
 
-Native parent-repo emitters are **not** in TCB. Ready-to-execute PR specs: `docs/pf-core/phase7-handoff.md`.
+Native parent-repo emitters are **not** in TCB. Ready-to-execute PR specs: `docs/pf-core/phase7-handoff.md` and `docs/pf-core/phase7-pr-artifacts/`.
+
+## Ready for scheduling
+
+In-repo gates required before booking an external review are **PASS** as of 2026-06-19:
+
+- Trusted kernel: `make pf-core-trusted` / `pf-core-trusted.ps1` (schema, fixtures, audit-boundary, Lean build)
+- E2E replay: `make pf-core-e2e` on Linux CI (`lake` required for `--lean-check` scenarios)
+- Adapters: `adapters-ci` workflow (catalog drift, PCS hash vectors, PIP smoke guard, verify-bundle reference)
+- Phase 7 in-repo reference: `bundle_verify.py`, admission parity tests, cross-repo smoke Step 1
+
+**Not blocking scheduling:** parent-repo Phase 7 PRs (Steps 2–5 in `phase7-cross-repo-verification.md`) — audit scope is TCB + operational gates in this repo.
+
+**Blocking production claims beyond TCB:** completed external review with findings triaged.
+
+## External audit scheduling checklist
+
+Schedule before organizational production claims beyond TCB gates:
+
+| Step | Action | Owner | Target |
+|------|--------|-------|--------|
+| 1 | Share `external-audit-brief.md` v2 + pin table with reviewer | PF-Core maintainer | T-4 weeks |
+| 2 | Provide `make pf-core-trusted` + `make pf-core-e2e` output artifacts | PF-Core maintainer | T-3 weeks |
+| 3 | Reviewer completes Lean TCB pass (suggested order in brief) | External reviewer | T-2 weeks |
+| 4 | Reviewer signs off or files findings; triage in-repo | PF-Core maintainer | T-1 week |
+| 5 | Update `acceptance.md` and `extraction-log.md` pins post-review | PF-Core maintainer | Before release claim |
+
+Blocking gates for scheduling: Phase 6 PASS, Phase 7 in-repo reference deliverables PASS (`phase7-status.md`).
 
 ## Gates
 
