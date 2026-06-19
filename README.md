@@ -13,7 +13,7 @@
 
 <br/>
 
-[Quick Start](#quick-start) · [How It Works](#how-it-works) · [Contributing](#contributing) · [Documentation](#documentation)
+[Quick Start](#quick-start) · [How It Works](#how-it-works) · [Ecosystem](#part-of-the-sentinelops-ecosystem) · [Contributing](#contributing) · [Documentation](#documentation)
 
 </div>
 
@@ -31,9 +31,62 @@ When an AI agent reads a file, sends an email, or hands work to another agent �
 | **Safety checks** | Rules that verify capabilities, tenant boundaries, and allowed effects on every step |
 | **Proofs you can replay** | Lean 4 theorems linked to a Python validator, so certificates mean what they claim |
 
-This repository is the **trusted kernel** — schemas, proofs, and a reference validator. It is not a full agent runtime, policy editor, or deployment platform.
+This repository is the **trusted kernel** — schemas, proofs, and a reference validator. It is not a full agent runtime, policy editor, or deployment platform. The [provability-fabric](https://github.com/SentinelOps-CI/provability-fabric) runtime and other [SentinelOps projects](https://github.com/SentinelOps-CI) build on top of it; see [ecosystem](#part-of-the-sentinelops-ecosystem) below.
 
 > **In one sentence:** turn runtime observations into ordered traces, check them against formal safety rules, and emit certificates backed by machine-checked proofs.
+
+---
+
+## Part of the SentinelOps ecosystem
+
+This repository is maintained by [SentinelOps](https://github.com/SentinelOps-CI) — an open-source organization building formally verified safety infrastructure for AI systems. **Provability Fabric Core is the small, trusted center of that stack.** Everything else wraps around it: runtimes that produce logs, science workflows that publish evidence, and forensic tools that verify bundles after an incident.
+
+Think of the relationship like a kernel and its userspace:
+
+```mermaid
+flowchart TB
+  subgraph untrusted["Surrounding systems (untrusted)"]
+    PF["provability-fabric<br/><i>Agent runtime & sidecar</i>"]
+    PCS["pcs-core<br/><i>Research evidence & LabTrust</i>"]
+    PIP["post-incident-proofs<br/><i>Forensic verification</i>"]
+  end
+
+  subgraph core["This repository (trusted kernel)"]
+    KERNEL["Provability Fabric Core<br/>Schemas · Lean proofs · Validator"]
+  end
+
+  PF -->|"audit logs via adapters"| KERNEL
+  PCS -->|"release fixtures via adapters"| KERNEL
+  KERNEL -->|"certificates & traces"| PIP
+
+  style KERNEL fill:#d1e7dd,stroke:#198754,stroke-width:2px
+  style PF fill:#e7f1ff,stroke:#0d6efd
+  style PCS fill:#e7f1ff,stroke:#0d6efd
+  style PIP fill:#e7f1ff,stroke:#0d6efd
+```
+
+### Related repositories
+
+| Repository | What it does | How it connects here |
+|------------|--------------|----------------------|
+| [**provability-fabric**](https://github.com/SentinelOps-CI/provability-fabric) | Full agent runtime with behavioral guarantees, sidecar enforcement, and end-to-end audit trails | Emits runtime audit logs. The [`adapters/provability-fabric/`](adapters/provability-fabric/) bridge in this repo normalizes those logs into core schemas for validation and certification. |
+| [**pcs-core**](https://github.com/SentinelOps-CI/pcs-core) | Proof-Carrying Science — schemas and tooling for verifiable research and agent evidence | LabTrust release fixtures are mapped to traces via [`adapters/pcs/`](adapters/pcs/) and checked by the kernel validator. |
+| [**post-incident-proofs**](https://github.com/SentinelOps-CI/post-incident-proofs) | Transforms runtime telemetry into machine-checked forensic evidence | Consumes certificate and trace artifacts emitted by this kernel to verify bundles cannot be forged or silently altered. |
+| [**lean-toolchain**](https://github.com/SentinelOps-CI/lean-toolchain) | Formally verified cryptographic and parsing utilities in Lean 4 | Shared proof infrastructure used across SentinelOps projects. |
+| [**runtime-safety-kernels**](https://github.com/SentinelOps-CI/runtime-safety-kernels) | Runtime safety components for model inference with formal proofs | Complementary formal verification work in the same ecosystem. |
+
+Browse all [SentinelOps repositories](https://github.com/SentinelOps-CI) for dataset safety specs, model asset guards, deployment boundary proofs, and more.
+
+### What lives where
+
+| In **this repo** | In **sibling repos** |
+|------------------|----------------------|
+| Formal safety model and Lean proofs | Agent orchestration and deployment |
+| JSON schemas and reference validator | Policy authoring and runtime enforcement |
+| Valid/invalid example fixtures | Production sidecars and admission controllers |
+| Reference log normalizers (`adapters/`) | Science publishing workflows, forensic bundles |
+
+If you are building on [provability-fabric](https://github.com/SentinelOps-CI/provability-fabric), start there for runtime integration. Come here when you need to understand, extend, or independently verify the safety kernel underneath.
 
 ---
 
