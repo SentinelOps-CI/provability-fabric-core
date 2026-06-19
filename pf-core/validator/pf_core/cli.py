@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping
 
 from pf_core.audit import audit_boundary
+from pf_core.bundle_verify import verify_bundle
 from pf_core.compile import compile_observation
 from pf_core.contracts import assert_trace_satisfies_contract, trace_satisfies_contract
 from pf_core.deciders import event_safe, handoff_safe, trace_safe
@@ -163,6 +164,18 @@ def cmd_emit_artifacts(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_verify_bundle(args: argparse.Namespace) -> int:
+    result = verify_bundle(
+        Path(args.bundle_dir),
+        schemas_dir=Path(args.schemas),
+        pf_core_version=args.pf_core_version,
+        require_safe=not args.allow_unsafe,
+    )
+    _emit(result)
+    print(f"OK: bundle verified at {args.bundle_dir}")
+    return 0
+
+
 def cmd_audit_boundary(args: argparse.Namespace) -> int:
     root = Path(args.root)
     audit_boundary(root)
@@ -235,6 +248,20 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--contract", help="optional contract JSON")
     p.add_argument("--runtime-id", default="pf-core-adapter")
     p.set_defaults(func=cmd_emit_artifacts)
+
+    p = core_sub.add_parser("verify-bundle", help="verify five-file emit-artifacts bundle")
+    add_common(p)
+    p.add_argument("--bundle-dir", required=True, help="directory with bundle artifacts")
+    p.add_argument(
+        "--pf-core-version",
+        help="optional PF-Core VERSION pin to check against schemas parent",
+    )
+    p.add_argument(
+        "--allow-unsafe",
+        action="store_true",
+        help="accept certificate.safe=false (forensic negative bundles)",
+    )
+    p.set_defaults(func=cmd_verify_bundle)
 
     p = core_sub.add_parser("audit-boundary", help="audit trusted boundary docs/code")
     p.add_argument("--root", default=".")
