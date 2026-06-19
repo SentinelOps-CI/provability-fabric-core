@@ -46,8 +46,8 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | All required schema files present (18) | PASS | `pf-core/schemas/` (v0 legacy + v1 primary) |
 | `additionalProperties: false` on trusted schemas | PASS | Schema files |
 | `schema_version` = `pf-core.<kind>.v0` (v1 for events) | PASS | `$id` fields |
-| Valid fixtures pass | PASS | 16 valid (`validate_examples.py`) |
-| Invalid fixtures fail | PASS | 19 invalid |
+| Valid fixtures pass | PASS | 21 valid (`validate_examples.py`) |
+| Invalid fixtures fail | PASS | 22 invalid |
 | Invalid fixtures fail for expected reason | PASS | `expected_error` + `must_fail_at` |
 | Negative twin per positive scenario | PASS | `examples.md` scenario table |
 | Schema `examples` + `x-invalid-examples` | PASS | All 14 schema files |
@@ -152,7 +152,7 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Criterion | Status | Evidence |
 |-----------|--------|----------|
 | End-to-end replay gate (sidecar → certificate) | PASS | `e2e-replay-gate.sh`, `e2e-replay-gate.ps1` |
-| E2E scenarios: allow, deny, MCP, handoff, PCS, tamper | PASS | Gate scripts |
+| E2E scenarios: allow, deny, MCP, handoff, PCS, tamper, email, network, lab release | PASS | Gate scripts |
 | Policy correspondence (20+ vectors) | PASS | `policy_correspondence_vectors.json` (23), `test_policy_correspondence.py` |
 | v1-primary trusted path | PASS | `schema-map.md`, `audit.py`, `compile.py` deprecation |
 | Adapter pinned SHAs in CI | PASS | `adapters-ci.yml`, `extraction-log.md` |
@@ -161,14 +161,15 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 | Release checklist | PASS | `docs/pf-core/release-checklist.md` |
 | External audit brief v2 (e2e + correspondence) | PASS | `external-audit-brief.md` |
 | Phase 7 handoff doc | PASS | `docs/pf-core/phase7-handoff.md` |
-| PIP smoke test | PASS | `adapters/post_incident_proofs/smoke_test.sh` |
+| Phase 7 in-repo reference (bundle verify, admission, probes) | PASS | `phase7-status.md`, `bundle_verify.py` |
+| PIP smoke test | PASS (SKIP semantics) | `smoke_test.sh` emits bundle + local `verify-bundle`; PIP `verify_bundle` **SKIP** until PR-1 |
 
 ## Must-not-do (hard prohibitions)
 
 | Prohibition | Status | Notes |
 |-------------|--------|-------|
 | sorry/admit/axiom in trusted Lean | PASS | CI enforced |
-| Trusted schemas without invalid fixtures | PASS | 19 invalid fixtures |
+| Trusted schemas without invalid fixtures | PASS | 22 invalid fixtures |
 | Silent coercion of unknown fields | PASS | `additionalProperties: false` |
 | Examples without expected failure modes | PASS | All invalid have `expected_error` |
 | Certificate overclaim | PASS | Emitter guard + semantics doc |
@@ -223,6 +224,7 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 - Claim classification uses T1–T5 with explicit 10-category map in `claim-boundary.md`.
 - Parent Provability Fabric Policy.lean is reference-only in `adapters/provability-fabric/reference/`; correspondence tested on extractable fragment only.
 - Adapter zone is untrusted; `pf-core-trusted` does not run adapter pytest (adapter CI is separate, blocking on `main`).
-- Phase 7 parent-repo emitters documented in `phase7-handoff.md` and per-repo checklists (`phase7-*-checklist.md`); in-repo harness: `scripts/phase7-cross-repo-smoke.sh` / `.ps1`.
-- External audit per `external-audit-brief.md` v2 is prepared but not yet executed; schedule independent review before organizational production claims beyond TCB gates.
-- Assessment §10 bridge items closed in Phase A (v0.6.0): v1 handoff audit lines, `validate-handoff` CLI, adapter contract v1 alignment, catalog export honesty, sidecar role mapping from fixture; validator unit tests in `pf-core/validator/tests/`; PCS trace_certificate mapping test in `adapters/pcs/tests/test_trace_certificate_mapping.py`.
+- Phase 7 parent-repo emitters documented in `phase7-handoff.md` and per-repo checklists (`phase7-*-checklist.md`); in-repo harness: `scripts/phase7-cross-repo-smoke.sh` / `.ps1`, `scripts/phase7-parent-probe.sh` / `.ps1`; status: `docs/pf-core/phase7-status.md`.
+- External audit per `external-audit-brief.md` v2 is prepared with scheduling checklist; not yet executed.
+- **Harness regression caveat:** if `adapters/post_incident_proofs/smoke_test.sh` or `scripts/phase7-cross-repo-smoke.ps1` is empty, adapter CI and Phase 7 smoke become no-ops; `adapters-ci.yml` guards against an empty PIP smoke script.
+- Assessment §10 bridge items closed in Phase A (v0.6.0): v1 handoff audit lines, `validate-handoff` CLI, adapter contract v1 alignment, catalog export honesty, sidecar role mapping from fixture; validator unit tests in `pf-core/validator/tests/` (8 modules); PCS trace_certificate mapping test in `adapters/pcs/tests/test_trace_certificate_mapping.py`; admission parity in `test_admission_parity.py`.
