@@ -47,6 +47,9 @@ pytest adapters/provability-fabric/tests adapters/pcs/tests pf-core/validator/te
 step "Step 1d: PIP smoke (emit-artifacts + verify_bundle probe)"
 bash adapters/post_incident_proofs/smoke_test.sh
 
+step "Step 2: parent-repo probe (Steps 2-5)"
+bash "$ROOT/scripts/phase7-parent-probe.sh"
+
 echo ""
 echo "=== In-repo gates: PASS ==="
 echo ""
