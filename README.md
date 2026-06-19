@@ -182,3 +182,57 @@ provability-fabric-core/
 ├── docs/pf-core/          Guides, tutorials, and boundary documentation
 └── scripts/               CI helpers and cross-repo smoke tests
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome — whether your background is formal methods, backend engineering, security, or developer tooling.
+
+### Where to start
+
+| Goal | Start here |
+|------|------------|
+| Learn the system without proofs | [Tutorial](docs/pf-core/tutorial.md) |
+| Fix a bug or improve documentation | Open an issue or PR — run the verification gate first |
+| Add a safety contract or rule | [How to add a contract](docs/pf-core/README.md#how-to-add-a-new-contract) |
+| Connect a new runtime log format | [Adapter contract](pf-core/docs/adapter-contract.md) and `adapters/` |
+| Dive into the formal model | [Formal model](pf-core/docs/formal-model.md) · [Theorem map](pf-core/docs/theorem-map.md) |
+
+### Pull request checklist
+
+1. Run `make pf-core-trusted` (or the PowerShell script on Windows) — all checks must pass
+2. When behavior changes, add both a **passing** and a **failing** example under `pf-core/examples/`
+3. Keep the trusted kernel small — integrations and log normalizers belong in `adapters/`, not in `pf-core/lean/`
+
+### What the kernel guarantees
+
+Given a well-formed trace and stated assumptions (intact hash chains, correct tenant labels, honest log emitters), the kernel verifies that:
+
+- Each action is authorized for its principal, tenant, and effect
+- Handoffs preserve authority within declared bounds
+- Certificates accurately reflect trace safety
+
+### What it does not guarantee
+
+The kernel does not prove that language models are correct, external tools are honest, operating systems are secure, or deployments are safe end-to-end. Those require organizational controls and carefully scoped adapter contracts. See [mission](docs/pf-core/mission.md) and [trusted boundary](docs/pf-core/trusted-boundary.md) for the full picture.
+
+---
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Documentation index](docs/pf-core/README.md) | Complete map of project documentation |
+| [Tutorial](docs/pf-core/tutorial.md) | Hands-on walkthrough for engineers |
+| [Mission and scope](docs/pf-core/mission.md) | What belongs in the kernel |
+| [Validator reference](pf-core/validator/README.md) | CLI commands, errors, and design constraints |
+| [Threat model](pf-core/docs/threat-model.md) | Security assumptions and adversary model |
+| [Examples catalog](pf-core/docs/examples.md) | Fixture walkthrough and expected outcomes |
+| [Schema reference](pf-core/docs/schema-map.md) | All JSON artifact types and versions |
+
+---
+
+## License
+
+Apache License 2.0. SPDX identifiers appear in individual file headers throughout the repository.
