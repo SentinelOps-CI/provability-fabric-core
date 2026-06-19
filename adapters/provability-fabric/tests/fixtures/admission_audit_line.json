@@ -1,0 +1,17 @@
+{
+  "admission_id": "obs-admission-file-read-1",
+  "trace_id": "trace-admission-1",
+  "event_id": "ev-admission-1",
+  "principal_id": "agent-1",
+  "namespace": "tenant-a",
+  "effect_kind": "file.read",
+  "target_resource": "/data/report.txt",
+  "verdict": "allowed",
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "policy_bundle": "policy/default.v0",
+  "evidence_bundle": "",
+  "capability": "cap:file-read",
+  "runtime_ref": "provability-fabric/admission-controller",
+  "timestamp": "2026-06-18T14:00:00Z",
+  "reason": "admission webhook permitted file read"
+}
