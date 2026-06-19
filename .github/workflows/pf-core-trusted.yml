@@ -24,7 +24,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install jsonschema referencing
+          pip install jsonschema referencing pytest
           pip install -e pf-core/validator
 
       - name: Run pf-core-trusted
