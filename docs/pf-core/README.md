@@ -32,7 +32,7 @@ Read [assumptions.md](assumptions.md) (A1–A10). Certificates list assumption I
 
 ## How to add a new adapter mapping
 
-1. Normalize runtime output to `pf-core.runtime_observation.v0` (see [adapter-contract.md](../pf-core/docs/adapter-contract.md)).
+1. Normalize runtime output to `pf-core.runtime_observation.v1` (see [adapter-contract.md](../pf-core/docs/adapter-contract.md)).
 2. Register capability and policy catalogs in `pf-core/validator/pf_core/compile.py` (or a dedicated adapter module).
 3. Add `valid/` and `invalid/` fixtures with `expected_error` and `must_fail_at` on negatives.
 4. Map audit fields in [ecosystem-inventory.md](ecosystem-inventory.md) (reference only).
@@ -127,7 +127,7 @@ pf core audit-boundary --root .
 | `pf-core/lean/PFCore/Effect.lean` | Effect kinds |
 | `pf-core/lean/PFCore/Action.lean` | Action, ActionAllowed |
 | `pf-core/lean/PFCore/Decision.lean` | Allowed / Denied |
-| `pf-core/lean/PFCore/Event.lean` | Event, EventSafe, EventIn |
+| `pf-core/lean/PFCore/Event.lean` | Event, EventSafe, EventWitness |
 | `pf-core/lean/PFCore/Trace.lean` | Trace, TraceSafe |
 | `pf-core/lean/PFCore/Contract.lean` | Contract algebra (pre/post/invariant, seq) |
 | `pf-core/lean/PFCore/StatefulContract.lean` | Stateful contract extension |
