@@ -48,13 +48,7 @@ def test_sidecar_denied_line_compiles():
 
 
 def test_sidecar_missing_capability_hint_is_ambiguous():
-    line = {
-        "request_id": "obs-mcp-ambiguous",
-        "agent_id": "agent-1",
-        "tenant": "tenant-a",
-        "tool_effect": "mcp.invoke",
-        "resource": "mcp:filesystem/read",
-        "policy_decision": "allowed",
-    }
+    fixture = Path(__file__).parent / "fixtures" / "sidecar_ambiguous_audit_line.json"
+    line = json.loads(fixture.read_text(encoding="utf-8"))
     with pytest.raises(ValueError, match="capability_hint required"):
         _normalize.normalize_sidecar_line(line)
