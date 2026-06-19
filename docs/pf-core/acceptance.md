@@ -223,6 +223,6 @@ Legend: **PASS** | **FAIL** | **N/A** (out of scope by design)
 - Claim classification uses T1–T5 with explicit 10-category map in `claim-boundary.md`.
 - Parent Provability Fabric Policy.lean is reference-only in `adapters/provability-fabric/reference/`; correspondence tested on extractable fragment only.
 - Adapter zone is untrusted; `pf-core-trusted` does not run adapter pytest (adapter CI is separate, blocking on `main`).
-- Phase 7 parent-repo emitters documented in `phase7-handoff.md` (not implemented in Phase 6).
+- Phase 7 parent-repo emitters documented in `phase7-handoff.md` and per-repo checklists (`phase7-*-checklist.md`); in-repo harness: `scripts/phase7-cross-repo-smoke.sh` / `.ps1`.
 - External audit per `external-audit-brief.md` v2 is prepared but not yet executed; schedule independent review before organizational production claims beyond TCB gates.
-- Assessment §10 bridge items closed in Phase A (v0.6.0): v1 handoff audit lines, `validate-handoff` CLI, adapter contract v1 alignment, catalog export honesty, sidecar role mapping from fixture.
+- Assessment §10 bridge items closed in Phase A (v0.6.0): v1 handoff audit lines, `validate-handoff` CLI, adapter contract v1 alignment, catalog export honesty, sidecar role mapping from fixture; validator unit tests in `pf-core/validator/tests/`; PCS trace_certificate mapping test in `adapters/pcs/tests/test_trace_certificate_mapping.py`.
