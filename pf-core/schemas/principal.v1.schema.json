@@ -18,5 +18,25 @@
       "type": "array",
       "items": { "type": "string", "minLength": 1 }
     }
-  }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.principal.v1",
+      "id": "agent-1",
+      "tenant_id": "tenant-a",
+      "roles": ["agent"],
+      "capabilities": ["cap:file-read"]
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing capabilities array",
+      "value": {
+        "schema_version": "pf-core.principal.v1",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": ["agent"]
+      }
+    }
+  ]
 }

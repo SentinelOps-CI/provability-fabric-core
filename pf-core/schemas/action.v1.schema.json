@@ -32,5 +32,63 @@
       "type": "array",
       "items": { "$ref": "pf-core.resource.v0" }
     }
-  }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.action.v1",
+      "id": "act-example",
+      "principal": {
+        "schema_version": "pf-core.principal.v1",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": ["agent"],
+        "capabilities": ["cap:file-read"]
+      },
+      "capability": {
+        "schema_version": "pf-core.capability.v0",
+        "id": "cap:file-read",
+        "effect_kind": "file.read",
+        "resource_pattern": "/data/*"
+      },
+      "effects": [
+        {
+          "schema_version": "pf-core.effect.v0",
+          "kind": "file.read"
+        }
+      ],
+      "reads": [
+        {
+          "schema_version": "pf-core.resource.v0",
+          "uri": "/data/report.txt",
+          "tenant_id": "tenant-a"
+        }
+      ],
+      "writes": []
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "empty effects array",
+      "value": {
+        "schema_version": "pf-core.action.v1",
+        "id": "act-bad",
+        "principal": {
+          "schema_version": "pf-core.principal.v1",
+          "id": "agent-1",
+          "tenant_id": "tenant-a",
+          "roles": ["agent"],
+          "capabilities": ["cap:file-read"]
+        },
+        "capability": {
+          "schema_version": "pf-core.capability.v0",
+          "id": "cap:file-read",
+          "effect_kind": "file.read",
+          "resource_pattern": "/data/*"
+        },
+        "effects": [],
+        "reads": [],
+        "writes": []
+      }
+    }
+  ]
 }
