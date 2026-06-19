@@ -20,7 +20,7 @@ from pf_core.schemas import load_registry, validate_object
 CHECKER = "lean4"
 CHECKER_VERSION = "4.14.0"
 PROOF_REF = "pf-core/lean/PFCore/Soundness.lean"
-DEFAULT_ASSUMPTIONS = ["A1", "A2", "A3", "A4", "A6", "A8"]
+DEFAULT_ASSUMPTIONS = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10"]
 
 FORBIDDEN_CERTIFICATE_PHRASES = [
     "this agent is safe",
