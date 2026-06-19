@@ -14,7 +14,11 @@ Fixtures live in `pf-core/examples/valid/` and `pf-core/examples/invalid/`. Rege
 | Handoff trace (v1) | `handoff_trace.json` | `handoff_trace_unsafe.json` | `UnsafeTrace` | decider_check |
 | Handoff document | `handoff.json` | `handoff_cross_tenant.json` | `UnsafeHandoff` | decider_check |
 | Handoff expansion | — | `handoff_authority_expansion.json` | `UnsafeHandoff` | decider_check |
-| Lab release gate | `lab_release_gate.json` | `lab_release_missing_policy.json` | `PolicyRefNotFound` | runtime_to_trace |
+| Lab release gate | `lab_release_gate.json`, `lab_release_observation.json` | `lab_release_missing_policy.json` | `PolicyRefNotFound` | runtime_to_trace |
+| Email observation | `email_send_observation.json` | `email_send_missing_capability_obs.json` | `UnsupportedCapability` / downgrade | runtime_to_trace |
+| Network observation | `network_denied_observation.json` | `network_denied_obs.json` | `DecisionDowngraded` | compile_downgrade |
+| Certificate | `certificate.json` | `certificate_overclaim.json` | `ForbiddenCertificateClaim` | certificate_overclaim |
+| Claim classification | `claim_classification.json` | — | — | — |
 | MCP sidecar | `mcp_sidecar_allowed.json`, `mcp_sidecar_observation.json` | `mcp_sidecar_denied.json`, `mcp_sidecar_ambiguous.json` | `AmbiguousMapping` | runtime_to_trace |
 | Hash integrity | — | `file_read_bad_hash.json`, `trace_tampered_chain.json` | `InvalidHash` | decider_check |
 | Schema version | — | `file_read_bad_schema_version.json` | `InvalidSchemaVersion` | schema_validation |
