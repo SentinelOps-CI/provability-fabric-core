@@ -37,6 +37,9 @@ if (Get-Command bash -ErrorAction SilentlyContinue) {
   Write-Host "SKIP: bash not available; run smoke_test.sh in Git Bash or WSL"
 }
 
+Step "Step 2: parent-repo probe (Steps 2-5)"
+& (Join-Path $Root "scripts\phase7-parent-probe.ps1")
+
 Write-Host ""
 Write-Host "=== In-repo gates: PASS ==="
 Write-Host ""
