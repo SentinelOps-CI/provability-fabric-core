@@ -45,5 +45,107 @@
       ]
     },
     "reason": { "type": "string" }
-  }
+  },
+  "examples": [
+    {
+      "schema_version": "pf-core.runtime_observation.v1",
+      "trace_id": "trace-obs-example",
+      "event_id": "obs-example",
+      "observation_id": "obs-example",
+      "principal": {
+        "schema_version": "pf-core.principal.v1",
+        "id": "agent-1",
+        "tenant_id": "tenant-a",
+        "roles": ["agent"],
+        "capabilities": ["cap:file-read"]
+      },
+      "action": {
+        "schema_version": "pf-core.action.v1",
+        "id": "act-obs-example",
+        "principal": {
+          "schema_version": "pf-core.principal.v1",
+          "id": "agent-1",
+          "tenant_id": "tenant-a",
+          "roles": ["agent"],
+          "capabilities": ["cap:file-read"]
+        },
+        "capability": {
+          "schema_version": "pf-core.capability.v0",
+          "id": "cap:file-read",
+          "effect_kind": "file.read",
+          "resource_pattern": "/data/*"
+        },
+        "effects": [
+          {
+            "schema_version": "pf-core.effect.v0",
+            "kind": "file.read"
+          }
+        ],
+        "reads": [
+          {
+            "schema_version": "pf-core.resource.v0",
+            "uri": "/data/report.txt",
+            "tenant_id": "tenant-a"
+          }
+        ],
+        "writes": []
+      },
+      "decision": "allowed",
+      "policy_ref": "policy/default.v0",
+      "evidence_ref": "evidence/default.v0",
+      "runtime_ref": "pf-core/fixtures",
+      "timestamp": "2026-06-18T00:00:00Z",
+      "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "x-invalid-examples": [
+    {
+      "description": "missing policy_ref",
+      "value": {
+        "schema_version": "pf-core.runtime_observation.v1",
+        "trace_id": "trace-obs-bad",
+        "event_id": "obs-bad",
+        "observation_id": "obs-bad",
+        "principal": {
+          "schema_version": "pf-core.principal.v1",
+          "id": "agent-1",
+          "tenant_id": "tenant-a",
+          "roles": ["agent"],
+          "capabilities": ["cap:file-read"]
+        },
+        "action": {
+          "schema_version": "pf-core.action.v1",
+          "id": "act-bad",
+          "principal": {
+            "schema_version": "pf-core.principal.v1",
+            "id": "agent-1",
+            "tenant_id": "tenant-a",
+            "roles": ["agent"],
+            "capabilities": ["cap:file-read"]
+          },
+          "capability": {
+            "schema_version": "pf-core.capability.v0",
+            "id": "cap:file-read",
+            "effect_kind": "file.read",
+            "resource_pattern": "/data/*"
+          },
+          "effects": [
+            {
+              "schema_version": "pf-core.effect.v0",
+              "kind": "file.read"
+            }
+          ],
+          "reads": [],
+          "writes": []
+        },
+        "decision": "allowed",
+        "evidence_ref": "evidence/default.v0",
+        "runtime_ref": "pf-core/fixtures",
+        "timestamp": "2026-06-18T00:00:00Z",
+        "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    }
+  ]
 }
