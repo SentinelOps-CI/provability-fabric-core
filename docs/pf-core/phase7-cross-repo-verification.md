@@ -13,8 +13,11 @@ In `provability-fabric-core` at tag `pf-core-v0.6.0`:
 ```bash
 make pf-core-trusted
 make pf-core-e2e
-PYTHONPATH=pf-core/validator pytest adapters/provability-fabric/tests adapters/pcs/tests -v
+PYTHONPATH=pf-core/validator pytest adapters/provability-fabric/tests adapters/pcs/tests pf-core/validator/tests -v
 bash adapters/post_incident_proofs/smoke_test.sh
+# Or run the combined harness:
+bash scripts/phase7-cross-repo-smoke.sh
+# Windows: powershell -NoProfile -File scripts/phase7-cross-repo-smoke.ps1
 ```
 
 All must pass. This gate does not depend on parent repo changes.
