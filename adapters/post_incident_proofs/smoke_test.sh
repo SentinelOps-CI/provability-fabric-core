@@ -7,16 +7,27 @@ OBS="$ROOT/pf-core/examples/valid/mcp_sidecar_observation.json"
 PIP_SHA="d5f3051b927f2f68cabac1a37c85d5113b9d77ad"
 VERSION="$(cat "$ROOT/pf-core/VERSION")"
 
-PYTHON="${PYTHON:-python3}"
-if ! command -v "$PYTHON" >/dev/null 2>&1; then
-  PYTHON=python
-fi
-if ! command -v "$PYTHON" >/dev/null 2>&1 && command -v py >/dev/null 2>&1; then
-  PYTHON="py -3"
+export PYTHONPATH="$ROOT/pf-core/validator"
+
+if [ -z "${PYTHON:-}" ]; then
+  for candidate in python python3 "py -3"; do
+    if command -v ${candidate%% *} >/dev/null 2>&1; then
+      if $candidate -c "import pf_core" >/dev/null 2>&1; then
+        PYTHON="$candidate"
+        break
+      fi
+    fi
+  done
+  PYTHON="${PYTHON:-python3}"
+  command -v ${PYTHON%% *} >/dev/null 2>&1 || PYTHON=python
 fi
 
-export PYTHONPATH="$ROOT/pf-core/validator"
 if ! $PYTHON -c "import pf_core, referencing, jsonschema" >/dev/null 2>&1; then
+  if [ -n "${PYTHONPATH:-}" ]; then
+    echo "ERROR: pf_core not importable (PYTHON=$PYTHON, PYTHONPATH=$PYTHONPATH)"
+    echo "Install pf-core-validator or set PYTHON to an interpreter with dependencies."
+    exit 1
+  fi
   $PYTHON -m pip install -q setuptools wheel jsonschema referencing
   $PYTHON -m pip install -q -e "$ROOT/pf-core/validator" jsonschema referencing 2>/dev/null || true
 fi
@@ -31,6 +42,13 @@ for f in runtime_observation.json event.json trace.json certificate.json audit.j
 done
 
 echo "OK: PF-Core artifact bundle at $OUT"
+
+echo "Running local pf core verify-bundle (reference verifier)"
+$PYTHON -m pf_core.cli core verify-bundle \
+  --schemas "$ROOT/pf-core/schemas" \
+  --bundle-dir "$OUT" \
+  --pf-core-version "$VERSION"
+echo "OK: local verify-bundle passed"
 
 _find_pip_root() {
   local candidate
