@@ -185,6 +185,7 @@ def audit_boundary(root: Path) -> None:
         "pf-core/validator/pf_core/audit_line.py",
         "pf-core/validator/pf_core/event_kind.py",
         "pf-core/validator/pf_core/audit.py",
+        "pf-core/validator/pf_core/bundle_verify.py",
     ]
     for rel in validator_modules:
         if not (root / rel).exists():
