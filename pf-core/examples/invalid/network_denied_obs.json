@@ -1,0 +1,59 @@
+{
+  "schema_version": "pf-core.runtime_observation.v1",
+  "trace_id": "trace-obs-net-bad",
+  "event_id": "obs-net-bad",
+  "observation_id": "obs-net-bad",
+  "principal": {
+    "schema_version": "pf-core.principal.v1",
+    "id": "agent-1",
+    "tenant_id": "tenant-a",
+    "roles": [
+      "cap:file-read",
+      "cap:email-send"
+    ],
+    "capabilities": []
+  },
+  "action": {
+    "schema_version": "pf-core.action.v1",
+    "id": "act-obs-net-bad",
+    "principal": {
+      "schema_version": "pf-core.principal.v1",
+      "id": "agent-1",
+      "tenant_id": "tenant-a",
+      "roles": [
+        "cap:file-read",
+        "cap:email-send"
+      ],
+      "capabilities": []
+    },
+    "capability": {
+      "schema_version": "pf-core.capability.v0",
+      "id": "cap:network",
+      "effect_kind": "network.egress",
+      "resource_pattern": "*"
+    },
+    "effects": [
+      {
+        "schema_version": "pf-core.effect.v0",
+        "kind": "network.egress"
+      }
+    ],
+    "reads": [
+      {
+        "schema_version": "pf-core.resource.v0",
+        "uri": "https://example.com",
+        "tenant_id": "tenant-a"
+      }
+    ],
+    "writes": []
+  },
+  "decision": "allowed",
+  "policy_ref": "policy/default.v0",
+  "evidence_ref": "",
+  "runtime_ref": "pf-core/fixtures",
+  "timestamp": "2026-06-18T00:00:00Z",
+  "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "expected_error": "DecisionDowngraded",
+  "must_fail_at": "compile_downgrade"
+}
