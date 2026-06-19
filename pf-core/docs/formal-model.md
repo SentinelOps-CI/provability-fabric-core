@@ -89,11 +89,11 @@ See `theorem-map.md` for the full index.
 
 
 
-## EventIn
+## EventWitness
 
-
-
-`EventIn` is an inductive witness for allowed/denied actions before event packaging.
+`EventWitness` (Lean: `PFCore.EventWitness`) is the inductive witness for allowed/denied
+actions before event packaging. Older docs may refer to `EventIn`; that name is retired in
+favor of `EventWitness` (see `pf-core/lean/PFCore/Event.lean`).
 
 
 
@@ -155,4 +155,10 @@ The proof is split: Lean proves decider soundness, event/trace safety, contract 
 | Runtime validates | Schema conformance, hash chains, compile determinism, contract deciders |
 
 | Assumptions | Observation fidelity, tenant labels, SHA-256 chaining (`docs/pf-core/assumptions.md`) |
+
+## Future extensions (not in v0.6 runtime path)
+
+**StatefulContract runtime.** Lean defines `StatefulContract` as a contract extension with `stateInit` / `stateStep` and projection theorems over simple contracts. There is no runtime state-machine compiler or stateful trace validator yet. Stateful behavior remains a **future extension** until simple contract + observation pipelines are stable in parent repos.
+
+**ClaimClassification in Lean.** `ClaimClassification.lean` provides T1–T5 scaffolding aligned with `claim-boundary.md`. Machine-checkable mapping from certificate `claim_class` to the spec’s ten organizational categories is **documentation-first** in v0.6; extending Lean deciders for claim-class enforcement is deferred unless certificates require on-chain classification proofs.
 
