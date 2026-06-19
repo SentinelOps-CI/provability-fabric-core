@@ -11,6 +11,10 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-0.6.0-6C757D?style=flat-square)](pf-core/VERSION)
 
+<br/>
+
+[Quick Start](#quick-start) · [How It Works](#how-it-works) · [Contributing](#contributing) · [Documentation](#documentation)
+
 </div>
 
 ---
@@ -63,27 +67,65 @@ Every safety predicate in the formal model has a matching runtime decider, with 
 
 ---
 
-## Verify locally
+## Quick start
+
+### Prerequisites
+
+- [Lean 4](https://leanprover.github.io/) via [elan](https://github.com/leanprover/elan)
+- Python 3.10+
+
+### Run the full verification gate
+
+This runs Lean proofs, schema validation, example fixtures, a boundary audit, and unit tests.
+
+**Linux / macOS**
 
 ```bash
 make pf-core-trusted
 ```
 
-On Windows (PowerShell):
+**Windows (PowerShell)**
 
 ```powershell
 powershell -File pf-core/scripts/pf-core-trusted.ps1
 ```
 
-Requires [Lean 4](https://leanprover.github.io/) (via `elan`) and Python 3.10+.
+### Try the CLI
 
-## Layout
+```bash
+pip install -e pf-core/validator
+
+# Validate schema files
+pf core schema-check --schemas pf-core/schemas
+
+# Compile a runtime observation into a trace event
+pf core compile-observation \
+  --file pf-core/examples/valid/mcp_sidecar_observation.json
+
+# Check an entire trace for safety violations
+pf core check-trace \
+  --file pf-core/examples/valid/file_read_allowed_trace.json
+
+# Emit a certificate for a safe trace
+pf core emit-certificate \
+  --trace pf-core/examples/valid/file_read_allowed_trace.json
+```
+
+New to the project? The [hands-on tutorial](docs/pf-core/tutorial.md) walks through the pipeline without requiring Lean.
+
+---
+
+## Repository layout
 
 ```
-pf-core/
-  lean/PFCore/     # Formal kernel (Lean 4)
-  schemas/         # JSON schemas (pf-core.*.v0)
-  examples/        # Valid/invalid fixtures
-  validator/       # Runtime bridge + CLI
-docs/pf-core/      # Boundary documentation
+provability-fabric-core/
+├── pf-core/
+│   ├── lean/PFCore/       Formal model and proofs (Lean 4)
+│   ├── schemas/           JSON schema definitions
+│   ├── examples/          Valid and invalid test fixtures
+│   ├── validator/         Python CLI and runtime bridge
+│   └── docs/              Technical deep-dives
+├── adapters/              Reference log normalizers (outside trusted core)
+├── docs/pf-core/          Guides, tutorials, and boundary documentation
+└── scripts/               CI helpers and cross-repo smoke tests
 ```
