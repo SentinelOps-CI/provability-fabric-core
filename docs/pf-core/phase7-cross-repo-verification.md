@@ -22,6 +22,16 @@ bash scripts/phase7-cross-repo-smoke.sh
 
 All must pass. This gate does not depend on parent repo changes.
 
+### Step 1 pass criteria (in-repo, provability-fabric-core)
+
+- [x] `make pf-core-trusted` (or `pf-core-trusted.ps1`): schema-check, fixtures, audit-boundary, Lean build
+- [x] `make pf-core-e2e` (Linux CI with `lake`; `--lean-check` scenarios require Lean toolchain)
+- [x] Adapter + validator pytest: `adapters/provability-fabric/tests`, `adapters/pcs/tests`, `pf-core/validator/tests`
+- [x] PIP smoke: `emit-artifacts` five-file bundle + local `pf core verify-bundle` (reference verifier)
+- [x] PIP smoke: parent `verify_bundle` **SKIP** at pin `d5f3051` until post-incident-proofs PR-1 merges
+
+Steps 2–5 below remain **blocked** until parent-repo PRs merge.
+
 ---
 
 ## Step 2: provability-fabric native path
