@@ -124,6 +124,8 @@ diff <(normalize golden) <(native emitter golden)
 | `adapters/provability-fabric/mcp_sidecar/normalize.py` | Reference normalizer |
 | `adapters/provability-fabric/tests/test_normalize.py` | Adapter tests (32 vectors) |
 | `adapters/provability-fabric/tests/fixtures/sidecar_audit_line.json` | Allowed golden |
+| `adapters/provability-fabric/tests/fixtures/sidecar_denied_audit_line.json` | Denied golden |
+| `adapters/provability-fabric/tests/fixtures/sidecar_ambiguous_audit_line.json` | Missing capability_hint (compile error) |
 | `pf-core/examples/valid/mcp_sidecar_observation.json` | Pre-built v1 observation |
 | `pf-core/scripts/e2e-replay-gate.sh` | Full pipeline gate |
 
