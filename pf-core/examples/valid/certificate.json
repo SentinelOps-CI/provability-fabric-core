@@ -1,0 +1,21 @@
+{
+  "assumptions": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A6",
+    "A8"
+  ],
+  "certificate_id": "cert-ad87f813c01e",
+  "checker": "lean4",
+  "checker_version": "4.14.0",
+  "claim_class": "Lean-proved",
+  "contract_hash": "b71574ec8a81a71f10a2485f6894da3aeeae95b29343947276ee0830caa255a3",
+  "created_by": "pf-core-validator",
+  "event_count": 1,
+  "proof_ref": "pf-core/lean/PFCore/Soundness.lean",
+  "safe": true,
+  "schema_version": "pf-core.certificate.v0",
+  "trace_hash": "68251767d9165d9a250acf0201a4611836c89716822c332fdae0d00d23c7ffee"
+}

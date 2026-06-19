@@ -1,0 +1,6 @@
+{
+  "schema_version": "pf-core.claim_classification.v0",
+  "claim": "Trace safety decider matches Lean TraceSafe",
+  "category": "T1",
+  "evidence_ref": "pf-core/lean/PFCore/Soundness.lean"
+}
