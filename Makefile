@@ -1,6 +1,6 @@
-PYTHON ?= python
+﻿PYTHON ?= python
 
-.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-trusted pf-core-e2e
+.PHONY: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-unit-tests pf-core-trusted pf-core-e2e
 
 PF_CORE_DIR := pf-core
 LEAN_DIR := $(PF_CORE_DIR)/lean
@@ -25,7 +25,11 @@ pf-core-examples: pf-core-install
 pf-core-audit: pf-core-install
 	PYTHONPATH=$(VALIDATOR_DIR) $(PF_CLI) audit-boundary --root .
 
-pf-core-trusted: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit
+pf-core-unit-tests: pf-core-install
+	$(PYTHON) -m pip install -q pytest
+	PYTHONPATH=$(VALIDATOR_DIR) $(PYTHON) -m pytest pf-core/validator/tests -q
+
+pf-core-trusted: pf-core-install pf-core-lean pf-core-schema pf-core-examples pf-core-audit pf-core-unit-tests
 	@echo "pf-core-trusted: all checks passed"
 
 pf-core-e2e: pf-core-install pf-core-lean
