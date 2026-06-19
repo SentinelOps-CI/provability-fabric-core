@@ -61,5 +61,26 @@ jobs:
       - name: Generate pcs replay trace fixture
         run: python adapters/pcs/normalize_release.py
 
+      - name: Guard PIP smoke script integrity
+        run: |
+          test -s adapters/post_incident_proofs/smoke_test.sh
+          grep -q emit-artifacts adapters/post_incident_proofs/smoke_test.sh
+
       - name: PIP smoke (emit-artifacts bundle)
         run: bash adapters/post_incident_proofs/smoke_test.sh
+
+      - name: PF-Core verify-bundle reference guard
+        run: |
+          OUT="${TMPDIR:-/tmp}/pf-ci-bundle-$$"
+          python -m pf_core.cli core emit-artifacts \
+            --schemas pf-core/schemas \
+            --file pf-core/examples/valid/mcp_sidecar_observation.json \
+            --out-dir "$OUT"
+          python -m pf_core.cli core verify-bundle \
+            --schemas pf-core/schemas \
+            --bundle-dir "$OUT" \
+            --pf-core-version "$(cat pf-core/VERSION)"
+          rm -rf "$OUT"
+
+      - name: pytest pf-core validator unit tests
+        run: pytest -q pf-core/validator/tests/
